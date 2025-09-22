@@ -1,2 +1,4 @@
 dados_b3/
 __pycache__/
+.venv/
+test.py
