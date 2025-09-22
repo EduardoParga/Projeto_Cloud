@@ -79,5 +79,3 @@ Exemplo de Logic App para notificações.
 
 3. Executar:
    - python extract.py
-3. Executar:
-   - python extract.py

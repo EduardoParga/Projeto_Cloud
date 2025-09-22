@@ -3,11 +3,14 @@ from helpers import yymmdd
 import requests
 import os
 import zipfile
+import shutil
+
+from load_azure import upload_to_azure
 
 PATH_TO_SAVE = "./dados_b3"
 
 def build_url_download(date_to_download):
-    return f"https://www.b3.com.br/pesquisapregao/download?filelist=PR{date_to_download}.zip"
+    return f"https://www.b3.com.br/pesquisapregao/download?filelist=SPRE{date_to_download}.zip"
 
 def try_http_download(url):
     session = requests.Session()
@@ -65,14 +68,25 @@ def run():
         zf.extractall(first_extract_dir)
 
     #Extrair a segunda parte
-    second_zip = os.path.join(first_extract_dir, f"PR{dt}.zip")
-    second_extract_dir = os.path.join(PATH_TO_SAVE, f"ARQUIVOSPREGAO_PR{dt}")
+    second_zip = os.path.join(first_extract_dir, f"SPRE{dt}.zip")
+    second_extract_dir = os.path.join(PATH_TO_SAVE, f"ARQUIVOSPREGAO_SPRE{dt}")
     os.makedirs(second_extract_dir, exist_ok=True)
     with zipfile.ZipFile(second_zip, "r") as zf:
         zf.extractall(second_extract_dir)
 
     print(f"[OK] Arquivos extraidos do zip com sucesso")
+
+    # Subir o arquivo xml para o Azure Blob Storage
+    arquivos = [f for f in os.listdir(f"{PATH_TO_SAVE}/ARQUIVOSPREGAO_SPRE{dt}") if f.endswith(".xml")]
+    for arquivo in arquivos:
+        upload_to_azure(arquivo, f"{PATH_TO_SAVE}/ARQUIVOSPREGAO_SPRE{dt}/{arquivo}")
+    print(f"[OK] Arquivo(s) XML enviado(s) para o Azure Blob Storage com sucesso")
+
+    # Apagar os pasta com arquivos salvos localmente
+    shutil.rmtree(f"{PATH_TO_SAVE}", ignore_errors=True)
+    print(f"[OK] Pastas locais apagadas com sucesso")
     
+
 
 if __name__ == "__main__":
     run()
