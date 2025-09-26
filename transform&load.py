@@ -1,4 +1,3 @@
-
 from load_azure import get_file_from_blob
 from lxml import etree
 import io
@@ -47,19 +46,56 @@ import io
 #     run()
 
 
-file_name = "BVBG.186.01_BV000471202509240001000061923366930.xml"
+file_name = "BVBG.186.01_BV000471202509250001000061934136420.xml"
 
-def transform():
-    xml_storage_file = get_file_from_blob(file_name)
-    xml_bytes = io.BytesIO(xml_storage_file.encode('utf-8'))
 
 #Buscar TckrSymb (nome das ações)
 #Buscar TradDtls (detalhes das negociações)
 #volume financeiro, preco min, preco max, preco abertura, preco fechamento, data negociacoes
 
-    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}TckrSymb', huge_tree=True):
-        # Process each 'TckrSymb' element
-        print(f'Ação: {elemxml.text}')
+def transform():
+    xml_storage_file = get_file_from_blob(file_name)
+    xml_bytes = io.BytesIO(xml_storage_file.encode('utf-8'))
 
+    # Buscar TckrSymb (nome das ações)
+    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}TckrSymb', huge_tree=True):
+        print(f"Ação: {elemxml.text}")
+
+    # Agora resetamos o cursor para reusar o mesmo buffer
+    xml_bytes.seek(0)
+    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}TradDt', huge_tree=True):
+        dt = elemxml.find('{urn:bvmf.217.01.xsd}Dt')
+        if dt is not None:
+            print(f"Data da Negociação: {dt.text}")
+
+    xml_bytes.seek(0)
+    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}TradDtls', huge_tree=True):
+        detalhes = {child.tag.split("}")[1]: child.text for child in elemxml}
+        print("Detalhes da Negociação:", detalhes)
+
+    xml_bytes.seek(0)
+    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}NtlFinVol', huge_tree=True):
+        #Volume financeiro
+        print(f'Volume Financeiro: R$ {float(elemxml.text):,.2f}')
+    
+    xml_bytes.seek(0)
+    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}MinPric', huge_tree=True):
+        #Preço mínimo
+        print(f'Preço Mínimo: R$ {float(elemxml.text):,.2f}')
+
+    xml_bytes.seek(0)
+    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}MaxPric', huge_tree=True):
+        #Preço máximo
+        print(f'Preço Máximo: R$ {float(elemxml.text):,.2f}')
+    
+    xml_bytes.seek(0)
+    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}FrstPric', huge_tree=True):
+        #Preço de abertura
+        print(f'Preço de Abertura: R$ {float(elemxml.text):,.2f}')
+
+    xml_bytes.seek(0)
+    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}LastPric', huge_tree=True):
+        #Preço de fechamento
+        print(f'Preço de Fechamento: R$ {float(elemxml.text):,.2f}')
 
 transform()
