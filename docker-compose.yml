@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: b3_postgres
+    environment:
+      POSTGRES_USER: b3
+      POSTGRES_PASSWORD: b3pwd_local_mude
+      POSTGRES_DB: b3db
+    ports:
+      - "5432:5432"
+    volumes:
+      - b3-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U b3 -d b3db"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  b3-pgdata:

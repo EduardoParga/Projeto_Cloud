@@ -2,3 +2,5 @@ requests>=2.0.0
 azure-storage-blob>=12.0.0
 azure-cosmos>=4.0.0
 lxml
+SQLAlchemy>=2.0
+psycopg[binary]>=3.1

@@ -1,101 +1,79 @@
-from load_azure import get_file_from_blob
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from datetime import datetime, date
+from decimal import Decimal, InvalidOperation
+from io import BytesIO
+from typing import List, Dict, Optional
+
 from lxml import etree
-import io
+from db_write import persist_quotes
+from load_azure import get_file_from_blob
 
-# AZURE_BLOB_CONNECTION = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;"
-# BLOB_CONTAINER_BRUTOS = "b3-dados-brutos"
+# TODO XML hardcoded (trocarei depois)
+FILE_NAME = "BVBG.186.01_BV000471202510030001000062018462640.xml"
 
-# def run():
-#     service = BlobServiceClient.from_connection_string(AZURE_BLOB_CONNECTION)
-#     container = service.get_container_client(BLOB_CONTAINER_BRUTOS)
+def to_decimal(x) -> Optional[Decimal]:
+    if x is None:
+        return None
+    s = str(x).strip().replace(",", ".")
+    if not s:
+        return None
+    try:
+        return Decimal(s)
+    except (InvalidOperation, ValueError):
+        return None
 
-#     blobs = list(container.list_blobs())
-#     if not blobs:
-#         print("[ERRO] Nenhum arquivo encontrado no container!")
-#         return
+def to_date(s: str) -> date:
+    if "T" in s:
+        s = s.split("T", 1)[0]
+    return datetime.strptime(s, "%Y-%m-%d").date()
 
-#     ultimo_blob = blobs[-1]
-#     print(f"[INFO] Lendo arquivo: {ultimo_blob.name}")
+def parse_pricrpt(xml_bytes: bytes) -> List[Dict]:
+    """Extrai 1 linha por <PricRpt> (namespace-agnóstico)."""
+    tree = etree.parse(BytesIO(xml_bytes), etree.XMLParser(recover=True, huge_tree=True))
+    pricrpts = tree.xpath('//*[local-name()="PricRpt"]')
 
-#     blob_data = container.download_blob(ultimo_blob.name).readall()
+    def first_text(node, xp: str) -> str:
+        v = node.xpath(xp)
+        if isinstance(v, list):
+            v = v[0] if v else ""
+        return (v or "").strip()
 
-#     # Parse manual usando ElementTree para pegar campos aninhados
-#     ns = {
-#         "bvmf": "urn:bvmf.217.01.xsd"
-#     }
-#     root = ET.fromstring(blob_data.decode("latin1"))
-#     pricrpts = root.findall(".//bvmf:PricRpt", ns)
+    rows: List[Dict] = []
+    for pr in pricrpts:
+        ativo = first_text(pr, './/*[local-name()="TckrSymb"][1]/text()')
+        dt    = first_text(pr, './/*[local-name()="TradDt"]/*[local-name()="Dt"][1]/text()') \
+                or first_text(pr, './/*[local-name()="TradDt"][1]/text()')
+        if not (ativo and dt):
+            continue
 
-#     data = []
-#     for pr in pricrpts:
-#         trad_dt = pr.findtext("bvmf:TradDt/bvmf:Dt", default="", namespaces=ns)
-#         tckr = pr.findtext("bvmf:SctyId/bvmf:TckrSymb", default="", namespaces=ns)
-#         opn_intrst = pr.findtext("bvmf:FinInstrmAttrbts/bvmf:OpnIntrst", default="", namespaces=ns)
-#         data.append({
-#             "TradDt": trad_dt,
-#             "TckrSymb": tckr,
-#             "OpnIntrst": opn_intrst
-#         })
+        abertura   = to_decimal(first_text(pr, './/*[local-name()="FrstPric"][1]/text()'))
+        fechamento = to_decimal(first_text(pr, './/*[local-name()="LastPric"][1]/text()'))
+        precomin   = to_decimal(first_text(pr, './/*[local-name()="MinPric"][1]/text()'))
+        precomax   = to_decimal(first_text(pr, './/*[local-name()="MaxPric"][1]/text()'))
+        volume     = to_decimal(first_text(pr, './/*[local-name()="NtlFinVol"][1]/text()')) # TODO confirmar tag de volume
 
-#     df = pd.DataFrame(data)
-#     print(df.head())
-#     print("\nColunas disponíveis no DataFrame:")
-#     print(df.columns)
+        rows.append({
+            "Ativo": ativo,
+            "DataPregao": to_date(dt),
+            "Abertura": abertura,
+            "Fechamento": fechamento,
+            "PrecoMin": precomin,
+            "PrecoMax": precomax,
+            "Volume": volume
+        })
+    return rows
 
-# if __name__ == "__main__":
-#     run()
+def main():
+    content = get_file_from_blob(FILE_NAME)
+    xml_bytes = content if isinstance(content, (bytes, bytearray)) else content.encode("utf-8", errors="ignore")
+    rows = parse_pricrpt(xml_bytes)
+    if not rows:
+        print(f"[WARN] 0 linha(s) extraída(s) de {FILE_NAME}")
+        return
+    persist_quotes(rows)
+    print(f"[OK] Gravadas {len(rows)} linha(s) de {FILE_NAME}")
 
-
-file_name = "BVBG.186.01_BV000471202509250001000061934136420.xml"
-
-
-#Buscar TckrSymb (nome das ações)
-#Buscar TradDtls (detalhes das negociações)
-#volume financeiro, preco min, preco max, preco abertura, preco fechamento, data negociacoes
-
-def transform():
-    xml_storage_file = get_file_from_blob(file_name)
-    xml_bytes = io.BytesIO(xml_storage_file.encode('utf-8'))
-
-    # Buscar TckrSymb (nome das ações)
-    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}TckrSymb', huge_tree=True):
-        print(f"Ação: {elemxml.text}")
-
-    # Agora resetamos o cursor para reusar o mesmo buffer
-    xml_bytes.seek(0)
-    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}TradDt', huge_tree=True):
-        dt = elemxml.find('{urn:bvmf.217.01.xsd}Dt')
-        if dt is not None:
-            print(f"Data da Negociação: {dt.text}")
-
-    xml_bytes.seek(0)
-    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}TradDtls', huge_tree=True):
-        detalhes = {child.tag.split("}")[1]: child.text for child in elemxml}
-        print("Detalhes da Negociação:", detalhes)
-
-    xml_bytes.seek(0)
-    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}NtlFinVol', huge_tree=True):
-        #Volume financeiro
-        print(f'Volume Financeiro: R$ {float(elemxml.text):,.2f}')
-    
-    xml_bytes.seek(0)
-    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}MinPric', huge_tree=True):
-        #Preço mínimo
-        print(f'Preço Mínimo: R$ {float(elemxml.text):,.2f}')
-
-    xml_bytes.seek(0)
-    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}MaxPric', huge_tree=True):
-        #Preço máximo
-        print(f'Preço Máximo: R$ {float(elemxml.text):,.2f}')
-    
-    xml_bytes.seek(0)
-    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}FrstPric', huge_tree=True):
-        #Preço de abertura
-        print(f'Preço de Abertura: R$ {float(elemxml.text):,.2f}')
-
-    xml_bytes.seek(0)
-    for _, elemxml in etree.iterparse(xml_bytes, tag='{urn:bvmf.217.01.xsd}LastPric', huge_tree=True):
-        #Preço de fechamento
-        print(f'Preço de Fechamento: R$ {float(elemxml.text):,.2f}')
-
-transform()
+if __name__ == "__main__":
+    main()
