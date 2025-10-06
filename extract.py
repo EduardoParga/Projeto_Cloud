@@ -3,71 +3,65 @@ from helpers import yymmdd
 import requests
 import os
 import zipfile
-from azure_storage import save_file_to_blob
+##from azure_storage import save_file_to_blob
 import shutil
 
-PATH_TO_SAVE = "./dados_b3"
+DIRETORIO_DESTINO = "./dados_b3"
 
-def build_url_download(date_to_download):
-    return f"https://www.b3.com.br/pesquisapregao/download?filelist=SPRE{date_to_download}.zip"
+def montar_url(data):
+    return f"https://www.b3.com.br/pesquisapregao/download?filelist=SPRE{data}.zip"
 
-def try_http_download(url):
-    session = requests.Session()
+def baixar_arquivo(url):
+    sessao = requests.Session()
     try:
-        print(f"[INFO] Tentando {url}")
-        resp = session.get(url, timeout=30)
-        if (resp.ok) and resp.content and len(resp.content) > 200:
-            if (resp.content[:2] == b"PK"):
-                return resp.content, os.path.basename(url)
+        print(f"[INFO] Baixando de {url}")
+        resposta = sessao.get(url, timeout=30)
+        if resposta.ok and resposta.content and len(resposta.content) > 200:
+            if resposta.content.startswith(b"PK"):
+                return resposta.content, os.path.basename(url)
     except requests.RequestException:
-        print(f"[ERROR] Falha ao acessar a {url}")
-        pass
+        print(f"[ERRO] Falha ao acessar {url}")
+    return None, None
 
-def run():
-    dt = yymmdd(datetime.now())
-    url_to_download = build_url_download(dt)
+def principal():
+    data_ref = "250923"  # Exemplo fixo, troque para yymmdd(datetime.now()) se quiser automatizar
+    url = montar_url(data_ref)
 
-    # 1) Download do Zip
-    zip_bytes, zip_name = try_http_download(url_to_download)
+    # 1) Download do arquivo ZIP
+    conteudo_zip, nome_zip = baixar_arquivo(url)
+    if not conteudo_zip:
+        raise RuntimeError("Falha ao baixar o arquivo de cotações.")
 
-    if not zip_bytes:
-        raise RuntimeError("Não foi possivel baixar o arquivo de cotações")
-    
-    print(f"[OK] Baixado arquivo de cotaçoes: {zip_name}")
+    print(f"[SUCESSO] Arquivo baixado: {nome_zip}")
 
-    # 2) Salvar o Zip
-    
-    #Cria o diretorio que ira salvar o arquivo zip do download
-    os.makedirs(PATH_TO_SAVE, exist_ok=True)
-    zip_path = f"{PATH_TO_SAVE}/pregao_{dt}.zip"
-    with open(zip_path, "wb") as f:
-        f.write(zip_bytes)
+    # 2) Salvar ZIP localmente
+    os.makedirs(DIRETORIO_DESTINO, exist_ok=True)
+    caminho_zip = f"{DIRETORIO_DESTINO}/pregao_{data_ref}.zip"
+    with open(caminho_zip, "wb") as arq:
+        arq.write(conteudo_zip)
 
-    print(f"[OK] Zip salvo em {zip_path}")
+    print(f"[SUCESSO] ZIP salvo em {caminho_zip}")
 
-    # 3) Extrair os arquivos do zip
+    # 3) Extrair o primeiro ZIP
+    pasta_temp = f"{DIRETORIO_DESTINO}/pregao_{data_ref}"
+    with zipfile.ZipFile(caminho_zip, "r") as zip_ref:
+        zip_ref.extractall(pasta_temp)
 
-    #Extrair a primeira pasta
-    with zipfile.ZipFile(zip_path, "r") as zf:
-        zf.extractall(f"{PATH_TO_SAVE}/pregao_{dt}")
-        
+    # 4) Extrair o ZIP interno
+    zip_interno = f"{pasta_temp}/SPRE{data_ref}.zip"
+    pasta_final = f"{DIRETORIO_DESTINO}/SPRE{data_ref}"
+    with zipfile.ZipFile(zip_interno, "r") as zip_ref2:
+        zip_ref2.extractall(pasta_final)
 
-    #Extrair a segunda parte
-    with zipfile.ZipFile(f"{PATH_TO_SAVE}/pregao_{dt}/SPRE{dt}.zip", "r") as zf:
-        zf.extractall(f"{PATH_TO_SAVE}/SPRE{dt}")
+    # 5) Enviar arquivos para Blob Storage
+    for arquivo in os.listdir(pasta_final):
+        caminho_arquivo = os.path.join(pasta_final, arquivo)
+        save_file_to_blob(f"BVBG186_{data_ref}.xml", caminho_arquivo)
+        print(f"[SUCESSO] {arquivo} enviado para Blob Storage")
 
+    # 6) Limpeza dos arquivos locais
+    shutil.rmtree(DIRETORIO_DESTINO, ignore_errors=True)
+    print(f"[SUCESSO] Limpeza dos arquivos locais concluída")
 
-    #Subir arquivo para o Blob Storage
-    arquivos = [f for f in os.listdir(f"{PATH_TO_SAVE}/SPRE{dt}")]
-    
-    for arquivo in arquivos:
-        save_file_to_blob(f"BVBG186_{dt}.xml", f"{PATH_TO_SAVE}/SPRE{dt}/{arquivo}")
-
-    #Apagar arquivos desnecessários
-    shutil.rmtree(f"{PATH_TO_SAVE}", ignore_errors=True)
-
-    print(f"[OK] Arquivos extraidos do zip com sucesso")
-    
-
-if __name__ == "__main__":
-    run()
+if __name__ == "__main__" :
+    principal()
