@@ -93,7 +93,7 @@ python init_db.py
 Execute o script que processa os arquivos extraídos e os carrega para o banco de dados.
 
 ```cmd
-python transform&load.py
+python "transform&load.py"
 ```
 
 7)  Conferir os Dados Carregados

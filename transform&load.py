@@ -10,8 +10,7 @@ from lxml import etree
 from db_write import persist_quotes
 from load_azure import get_file_from_blob
 
-# TODO XML hardcoded (trocarei depois)
-FILE_NAME = "BVBG.186.01_BV000471202510030001000062018462640.xml"
+POINTER_BLOB = "_LATEST_B3_XML.txt"  # escrito pelo extract.py
 
 def to_decimal(x) -> Optional[Decimal]:
     if x is None:
@@ -66,14 +65,25 @@ def parse_pricrpt(xml_bytes: bytes) -> List[Dict]:
     return rows
 
 def main():
-    content = get_file_from_blob(FILE_NAME)
+    # 1) pega o nome do XML mais recente (gravado pelo extract.py)
+    pointer_content = get_file_from_blob(POINTER_BLOB)
+    blob_name = (pointer_content.decode("utf-8") if isinstance(pointer_content, (bytes, bytearray)) else pointer_content).strip()
+    if not blob_name:
+        raise RuntimeError("Ponteiro vazio: _LATEST_B3_XML.txt não contém o nome do XML.")
+    print(f"[INFO] Lendo blob apontado: {blob_name}")
+
+    # 2) baixa e processa o XML apontado
+    content = get_file_from_blob(blob_name)
     xml_bytes = content if isinstance(content, (bytes, bytearray)) else content.encode("utf-8", errors="ignore")
+
     rows = parse_pricrpt(xml_bytes)
     if not rows:
-        print(f"[WARN] 0 linha(s) extraída(s) de {FILE_NAME}")
+        print(f"[WARN] 0 linha(s) extraída(s) de {blob_name}")
         return
+
     persist_quotes(rows)
-    print(f"[OK] Gravadas {len(rows)} linha(s) de {FILE_NAME}")
+    print(f"[OK] Gravadas {len(rows)} linha(s) de {blob_name}")
+
 
 if __name__ == "__main__":
     main()

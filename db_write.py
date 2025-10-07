@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine, text
 
 def get_engine():
-    # ajuste a porta se mapeou diferente no Docker (ex.: 5433)
+    # mudando porta para 5433 para não conflitar com projeto de Big Data
     return create_engine(
-        "postgresql+psycopg://b3:b3pwd_local_mude@localhost:5432/b3db",
+        "postgresql+psycopg://b3:b3pwd_local_mude@localhost:5433/b3db",
         echo=True  # mostra os INSERT/UPDATE no terminal
     )
 

@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: b3pwd_local_mude
       POSTGRES_DB: b3db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - b3-pgdata:/var/lib/postgresql/data
     healthcheck:

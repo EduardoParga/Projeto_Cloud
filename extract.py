@@ -76,16 +76,26 @@ def run():
 
     print(f"[OK] Arquivos extraidos do zip com sucesso")
 
-    # Subir o arquivo xml para o Azure Blob Storage
+    # Subir o(s) XML(s) para o Azure Blob Storage
     arquivos = [f for f in os.listdir(f"{PATH_TO_SAVE}/ARQUIVOSPREGAO_SPRE{dt}") if f.endswith(".xml")]
+    last_xml_name = None
     for arquivo in arquivos:
         upload_to_azure(arquivo, f"{PATH_TO_SAVE}/ARQUIVOSPREGAO_SPRE{dt}/{arquivo}")
+        last_xml_name = arquivo
     print(f"[OK] Arquivo(s) XML enviado(s) para o Azure Blob Storage com sucesso")
 
-    # Apagar os pasta com arquivos salvos localmente
+    # >>> NOVO: grava um ponteiro com o nome do último XML enviado
+    if last_xml_name:
+        POINTER_LOCAL = os.path.join(PATH_TO_SAVE, "_LATEST_B3_XML.txt")
+        with open(POINTER_LOCAL, "w", encoding="utf-8") as f:
+            f.write(last_xml_name.strip())
+        upload_to_azure("_LATEST_B3_XML.txt", POINTER_LOCAL)
+
+    # Apagar as pastas locais
     shutil.rmtree(f"{PATH_TO_SAVE}", ignore_errors=True)
     print(f"[OK] Pastas locais apagadas com sucesso")
-    
+
+        
 
 
 if __name__ == "__main__":
