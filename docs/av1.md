@@ -38,32 +38,24 @@ O arquivo `load_azure.py` implementa a etapa de upload para Blob e a etapa de le
 - (Opcional) Azure Storage Explorer ou similar para inspecionar blobs.
 - (Opcional) Azure Cosmos DB Emulator (Windows) ou uma conta Cosmos DB real (se for usar o serviço remoto ajuste as chaves/endpoints em `load_azure.py`).
 
+Claro, aqui está o tutorial atualizado com os novos passos.
+
 ## Instruções passo-a-passo
 
-1) Iniciar o Azurite (Docker)
+1)  Iniciar os Serviços (Docker)
 
-Abra um terminal (cmd.exe) e execute o container Azurite. Este comando expõe as portas padrão do Azurite para Blob, Queue e Table em localhost:
+Abra um terminal (cmd.exe) e suba os serviços necessários (Azurite, PostgreSQL, etc.) usando o Docker Compose. Este comando irá iniciá-los em background.
 
 ```cmd
-docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 \
-	-v %cd%/azurite:/data \
-	mcr.microsoft.com/azure-storage/azurite
+docker compose up -d
 ```
 
-Notas:
-- O volume `-v %cd%/azurite:/data` é opcional; permite persistir os dados do Azurite na pasta `azurite` do diretório atual.
-- Se preferir rodar em background, adicione `-d` ao comando `docker run`.
-
-2) (Opcional) Iniciar o Cosmos DB Emulator (Windows)
-
-Se quiser testar localmente sem usar um serviço na nuvem, instale e rode o Azure Cosmos DB Emulator para Windows. Se optar por usar uma conta Cosmos DB na nuvem, atualize as variáveis de conexão no `load_azure.py`.
-
-3) Preparar o ambiente Python
+2)  Preparar o ambiente Python
 
 No terminal (cmd.exe):
 
 ```cmd
-python -m venv .venv
+python -m venv.venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 ```
@@ -74,33 +66,43 @@ Se `requirements.txt` não existir ou faltar dependências, instale manualmente:
 pip install azure-storage-blob azure-cosmos
 ```
 
-4) Baixar e extrair o arquivo da B3
+3)  Inicializar o Banco de Dados
 
-Execute o script principal de extração que já existe no repositório. Ele tentará baixar o ZIP mais recente e extrair os arquivos em `dados_b3/`:
+Execute o script para criar as tabelas e a estrutura necessária no banco de dados PostgreSQL.
+
+```cmd
+python init_db.py
+```
+
+4)  Baixar e extrair o arquivo da B3
+
+Execute o script principal de extração. Ele tentará baixar o ZIP mais recente e extrair os arquivos em `dados_b3/`:
 
 ```cmd
 python extract.py
 ```
 
 Resultados esperados:
-- Diretório `dados_b3/pregao_<yymmdd>/` contendo os arquivos extraídos.
 
-5) Fazer upload para Azurite e carregar no Cosmos DB
+  - Diretório `dados_b3/pregao_<yymmdd>/` contendo os arquivos extraídos.
 
-O repositório contém o script `load_azure.py` que automatiza:
-- encontrar o arquivo de cotações extraído;
-- fazer upload para o container Blob `b3-dados-brutos` (será criado automaticamente no Azurite);
-- fazer parsing das linhas do arquivo e `upsert` dos documentos no container do Cosmos DB.
+<!-- end list -->
 
-Execute:
+5)  Transformar e Carregar os Dados
+
+Execute o script que processa os arquivos extraídos e os carrega para o banco de dados.
 
 ```cmd
-python load_azure.py
+python transform&load.py
 ```
 
-Observações:
-- `load_azure.py` usa strings de conexão padrão para o Azurite e o Cosmos DB Emulator; se você estiver usando recursos reais no Azure, substitua as constantes por suas credenciais ou configure via variáveis de ambiente no script.
-- O script cria o database `B3Database` e o container `Cotacoes` caso não existam.
+6)  Conferir os Dados Carregados
+
+Para visualizar a tabela criada e verificar se os dados foram carregados corretamente, execute o script de conferência.
+
+```cmd
+python conferencia_postgresql.py
+```
 
 ## Verificação
 
