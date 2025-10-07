@@ -23,7 +23,7 @@ Use este guia como checklist de execução e como documentação a ser entregue 
 
 - Fonte: arquivos de pregão da B3 (baixados via `extract.py`).
 - Storage temporário: Azurite (emulação do Azure Blob Storage) — representa o Storage Account do projeto em nuvem.
-- Persistência final: Cosmos DB (NoSQL) — onde os documentos serão armazenados para consultas posteriores.
+- Persistência final: PostGreSQL 
 
 O arquivo `load_azure.py` implementa a etapa de upload para Blob e a etapa de leitura/parsing + `upsert` no Cosmos DB.
 
@@ -33,7 +33,6 @@ O arquivo `load_azure.py` implementa a etapa de upload para Blob e a etapa de le
 - Python 3.8+ (recomenda-se 3.11). Virtualenv recomendado.
 - Dependências Python (ver `requirements.txt`). Exemplos:
 	- azure-storage-blob
-	- azure-cosmos
 
 - (Opcional) Azure Storage Explorer ou similar para inspecionar blobs.
 - (Opcional) Azure Cosmos DB Emulator (Windows) ou uma conta Cosmos DB real (se for usar o serviço remoto ajuste as chaves/endpoints em `load_azure.py`).
@@ -42,31 +41,48 @@ Claro, aqui está o tutorial atualizado com os novos passos.
 
 ## Instruções passo-a-passo
 
-1)  Iniciar os Serviços (Docker)
+1) Iniciar o Azurite (Docker)
 
-Abra um terminal (cmd.exe) e suba os serviços necessários (Azurite, PostgreSQL, etc.) usando o Docker Compose. Este comando irá iniciá-los em background.
+Abra um terminal (cmd.exe) e execute o container Azurite. Este comando expõe as portas padrão do Azurite para Blob, Queue e Table em localhost:
+
+```cmd
+docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 \
+	-v %cd%/azurite:/data \
+	mcr.microsoft.com/azure-storage/azurite
+```
+
+Notas:
+- O volume `-v %cd%/azurite:/data` é opcional; permite persistir os dados do Azurite na pasta `azurite` do diretório atual.
+- Se preferir rodar em background, adicione `-d` ao comando `docker run`.
+
+2) Preparar o ambiente Python
+
+No terminal (cmd.exe):
+
+```cmd
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+3) Baixar e extrair o arquivo da B3
+
+Execute o script principal de extração que já existe no repositório. Ele tentará baixar o ZIP mais recente e extrair os arquivos em `dados_b3/`:
+
+```cmd
+python extract.py
+```
+
+Resultados esperados:
+- Diretório `dados_b3/pregao_<yymmdd>/` contendo os arquivos extraídos.
+
+4)  Iniciar os Serviços (Docker)
 
 ```cmd
 docker compose up -d
 ```
 
-2)  Preparar o ambiente Python
-
-No terminal (cmd.exe):
-
-```cmd
-python -m venv.venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-Se `requirements.txt` não existir ou faltar dependências, instale manualmente:
-
-```cmd
-pip install azure-storage-blob azure-cosmos
-```
-
-3)  Inicializar o Banco de Dados
+5)  Inicializar o Banco de Dados
 
 Execute o script para criar as tabelas e a estrutura necessária no banco de dados PostgreSQL.
 
@@ -74,21 +90,7 @@ Execute o script para criar as tabelas e a estrutura necessária no banco de dad
 python init_db.py
 ```
 
-4)  Baixar e extrair o arquivo da B3
-
-Execute o script principal de extração. Ele tentará baixar o ZIP mais recente e extrair os arquivos em `dados_b3/`:
-
-```cmd
-python extract.py
-```
-
-Resultados esperados:
-
-  - Diretório `dados_b3/pregao_<yymmdd>/` contendo os arquivos extraídos.
-
-<!-- end list -->
-
-5)  Transformar e Carregar os Dados
+6)  Transformar e Carregar os Dados
 
 Execute o script que processa os arquivos extraídos e os carrega para o banco de dados.
 
@@ -96,7 +98,7 @@ Execute o script que processa os arquivos extraídos e os carrega para o banco d
 python transform&load.py
 ```
 
-6)  Conferir os Dados Carregados
+7)  Conferir os Dados Carregados
 
 Para visualizar a tabela criada e verificar se os dados foram carregados corretamente, execute o script de conferência.
 
