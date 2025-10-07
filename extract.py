@@ -3,7 +3,7 @@ from helpers import yymmdd
 import requests
 import os
 import zipfile
-##from azure_storage import save_file_to_blob
+from azure_storage import save_file_to_blob
 import shutil
 
 DIRETORIO_DESTINO = "./dados_b3"
