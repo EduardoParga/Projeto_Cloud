@@ -46,9 +46,7 @@ Claro, aqui está o tutorial atualizado com os novos passos.
 Abra um terminal (cmd.exe) e execute o container Azurite. Este comando expõe as portas padrão do Azurite para Blob, Queue e Table em localhost:
 
 ```cmd
-docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 \
-	-v %cd%/azurite:/data \
-	mcr.microsoft.com/azure-storage/azurite
+docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 -v %cd%/azurite:/data mcr.microsoft.com/azure-storage/azurite
 ```
 
 Notas:
