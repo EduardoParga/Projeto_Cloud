@@ -46,6 +46,7 @@ def transform():
             volume = find_by_localname(pr, "FinQty")
         if volume is None:
             volume = find_by_localname(pr, "TotTradQty")
+        ent = find_by_localname(pr, "Ent")  
 
         print(
             f"Ação: {nome_acao}, "
@@ -54,7 +55,8 @@ def transform():
             f"Fechamento: {preco_fechamento}, "
             f"Min: {preco_min}, "
             f"Max: {preco_max}, "
-            f"Volume: {volume}"
+            f"Volume: {volume}, "
+            f"Ent: {ent}"
         )
 
 transform()
