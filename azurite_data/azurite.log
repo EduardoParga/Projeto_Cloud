@@ -1,155 +1,33 @@
-2025-10-08T01:50:11.114Z 	 info: Azurite Blob service is starting on 0.0.0.0:10000
-2025-10-08T01:50:11.116Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:50:11.116Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T01:50:11.135Z 	 info: BlobGCManager:start() Starting BlobGCManager. Set status to Initializing.
-2025-10-08T01:50:11.136Z 	 info: BlobGCManager:start() Trigger mark and sweep loop. Set status to Running.
-2025-10-08T01:50:11.136Z 	 info: BlobGCManager:markSweepLoop() Start next mark and sweep.
-2025-10-08T01:50:11.136Z 	 info: BlobGCManager:markSweep() Get all extents.
-2025-10-08T01:50:11.137Z 	 info: BlobGCManager:start() BlobGCManager successfully started.
-2025-10-08T01:50:11.140Z 	 info: BlobGCManager:markSweep() Got 0 extents.
-2025-10-08T01:50:11.140Z 	 info: BlobGCManager:markSweep() Get referred extents.
-2025-10-08T01:50:11.141Z 	 info: BlobGCManager:markSweep() Got referred extents, unreferenced extents count is 0.
-2025-10-08T01:50:11.141Z 	 info: BlobGCManager:markSweepLoop() Mark and sweep finished, taken 5ms.
-2025-10-08T01:50:11.141Z 	 info: BlobGCManager:markSweepLoop() Sleep for 600000ms.
-2025-10-08T01:50:11.146Z 	 info: Azurite Blob service successfully listens on http://0.0.0.0:10000
-2025-10-08T01:50:11.150Z 	 info: InstaceID d71f99fd-2707-4809-8a36-1b8f59660cbf, SessionID d4e1d5a7-a373-404f-9e77-5c272ba7ff1c.
-2025-10-08T01:50:11.187Z 	 info: Telemetry initialize successfully.
-2025-10-08T01:50:11.193Z 	 verbose: Send start telemetry
-2025-10-08T01:51:11.118Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:51:11.118Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T01:52:11.120Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:52:11.120Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T01:53:11.120Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:53:11.120Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T01:54:11.121Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:54:11.122Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T01:55:11.122Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:55:11.122Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T01:56:11.124Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:56:11.124Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T01:57:11.124Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:57:11.124Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T01:58:11.124Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:58:11.125Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T01:58:51.002Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 info: BlobStorageContextMiddleware: RequestMethod=GET RequestURL=http://localhost/ RequestHeaders:{"host":"localhost:10000","connection":"keep-alive","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Opera GX\";v=\"122\"","sec-ch-ua-mobile":"?0","sec-ch-ua-platform":"\"Windows\"","upgrade-insecure-requests":"1","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 OPR/122.0.0.0","accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7","sec-fetch-site":"none","sec-fetch-mode":"navigate","sec-fetch-user":"?1","sec-fetch-dest":"document","accept-encoding":"gzip, deflate, br, zstd","accept-language":"pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6"} ClientIP=172.18.0.1 Protocol=http HTTPVersion=1.1
-2025-10-08T01:58:51.018Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 error: BlobStorageContextMiddleware: BlobStorageContextMiddleware: Value for one of the query parameters specified in the request URI is invalid.
-2025-10-08T01:58:51.019Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 error: ErrorMiddleware: Received a MiddlewareError, fill error information to HTTP response
-2025-10-08T01:58:51.019Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 error: ErrorMiddleware: ErrorName=StorageError ErrorMessage=Value for one of the query parameters specified in the request URI is invalid.  ErrorHTTPStatusCode=400 ErrorHTTPStatusMessage=Value for one of the query parameters specified in the request URI is invalid. ErrorHTTPHeaders={"x-ms-error-code":"InvalidQueryParameterValue","x-ms-request-id":"9dcf8002-62b5-4bae-b6b9-842a3e50ec14"} ErrorHTTPBody="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Error>\n  <Code>InvalidQueryParameterValue</Code>\n  <Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:9dcf8002-62b5-4bae-b6b9-842a3e50ec14\nTime:2025-10-08T01:58:51.002Z</Message>\n</Error>" ErrorStack="StorageError: Value for one of the query parameters specified in the request URI is invalid.\n    at StorageErrorFactory.getInvalidQueryParameterValue (/opt/azurite/dist/src/blob/errors/StorageErrorFactory.js:45:16)\n    at blobStorageContextMiddleware (/opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:127:60)\n    at /opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:15:16\n    at Layer.handle [as handle_request] (/opt/azurite/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/opt/azurite/node_modules/express/lib/router/index.js:328:13)\n    at /opt/azurite/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/opt/azurite/node_modules/express/lib/router/index.js:346:12)\n    at next (/opt/azurite/node_modules/express/lib/router/index.js:280:10)\n    at logger (/opt/azurite/node_modules/morgan/index.js:144:5)\n    at Layer.handle [as handle_request] (/opt/azurite/node_modules/express/lib/router/layer.js:95:5)"
-2025-10-08T01:58:51.019Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 error: ErrorMiddleware: Set HTTP code: 400
-2025-10-08T01:58:51.019Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 error: ErrorMiddleware: Set HTTP status message: Value for one of the query parameters specified in the request URI is invalid.
-2025-10-08T01:58:51.020Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 error: ErrorMiddleware: Set HTTP Header: x-ms-error-code=InvalidQueryParameterValue
-2025-10-08T01:58:51.020Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 error: ErrorMiddleware: Set HTTP Header: x-ms-request-id=9dcf8002-62b5-4bae-b6b9-842a3e50ec14
-2025-10-08T01:58:51.020Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 error: ErrorMiddleware: Set content type: application/xml
-2025-10-08T01:58:51.020Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 error: ErrorMiddleware: Set HTTP body: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Error>\n  <Code>InvalidQueryParameterValue</Code>\n  <Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:9dcf8002-62b5-4bae-b6b9-842a3e50ec14\nTime:2025-10-08T01:58:51.002Z</Message>\n</Error>"
-2025-10-08T01:58:51.022Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 verbose: Send Blob telemetry: B_Service_SetProperties
-2025-10-08T01:58:51.023Z 9dcf8002-62b5-4bae-b6b9-842a3e50ec14 info: EndMiddleware: End response. TotalTimeInMS=22 StatusCode=400 StatusMessage=Value for one of the query parameters specified in the request URI is invalid. Headers={"server":"Azurite-Blob/3.35.0","x-ms-error-code":"InvalidQueryParameterValue","x-ms-request-id":"9dcf8002-62b5-4bae-b6b9-842a3e50ec14","content-type":"application/xml"}
-2025-10-08T01:58:51.843Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 info: BlobStorageContextMiddleware: RequestMethod=GET RequestURL=http://localhost/favicon.ico RequestHeaders:{"host":"localhost:10000","connection":"keep-alive","sec-ch-ua-platform":"\"Windows\"","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 OPR/122.0.0.0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Opera GX\";v=\"122\"","sec-ch-ua-mobile":"?0","accept":"image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8","sec-fetch-site":"same-origin","sec-fetch-mode":"no-cors","sec-fetch-dest":"image","referer":"http://localhost:10000/","accept-encoding":"gzip, deflate, br, zstd","accept-language":"pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,es;q=0.6"} ClientIP=172.18.0.1 Protocol=http HTTPVersion=1.1
-2025-10-08T01:58:51.844Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 info: BlobStorageContextMiddleware: Account=favicon.ico Container=undefined Blob=
-2025-10-08T01:58:51.844Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 verbose: DispatchMiddleware: Dispatching request...
-2025-10-08T01:58:51.846Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 error: DispatchMiddleware: Incoming URL doesn't match any of swagger defined request patterns.
-2025-10-08T01:58:51.847Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 error: ErrorMiddleware: Received a MiddlewareError, fill error information to HTTP response
-2025-10-08T01:58:51.847Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 error: ErrorMiddleware: ErrorName=UnsupportedRequestError ErrorMessage=Incoming URL doesn't match any of swagger defined request patterns.  ErrorHTTPStatusCode=400 ErrorHTTPStatusMessage=undefined ErrorHTTPHeaders=undefined ErrorHTTPBody=undefined ErrorStack="UnsupportedRequestError: Incoming URL doesn't match any of swagger defined request patterns.\n    at dispatchMiddleware (/opt/azurite/dist/src/blob/generated/middleware/dispatch.middleware.js:41:30)\n    at /opt/azurite/dist/src/blob/generated/ExpressMiddlewareFactory.js:50:47\n    at Layer.handle [as handle_request] (/opt/azurite/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/opt/azurite/node_modules/express/lib/router/index.js:328:13)\n    at /opt/azurite/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/opt/azurite/node_modules/express/lib/router/index.js:346:12)\n    at next (/opt/azurite/node_modules/express/lib/router/index.js:280:10)\n    at blobStorageContextMiddleware (/opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:137:5)\n    at /opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:15:16\n    at Layer.handle [as handle_request] (/opt/azurite/node_modules/express/lib/router/layer.js:95:5)"
-2025-10-08T01:58:51.847Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 error: ErrorMiddleware: Set HTTP code: 400
-2025-10-08T01:58:51.847Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 error: ErrorMiddleware: Set HTTP body: undefined
-2025-10-08T01:58:51.847Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 verbose: Send Blob telemetry: B_Service_SetProperties
-2025-10-08T01:58:51.847Z 1b572ded-0d33-4ed3-9370-49f0c99b9753 info: EndMiddleware: End response. TotalTimeInMS=4 StatusCode=400 StatusMessage=undefined Headers={"server":"Azurite-Blob/3.35.0"}
-2025-10-08T01:59:11.125Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T01:59:11.126Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:00:11.108Z 	 info: BlobGCManager:markSweepLoop() Start next mark and sweep.
-2025-10-08T02:00:11.108Z 	 info: BlobGCManager:markSweep() Get all extents.
-2025-10-08T02:00:11.108Z 	 info: BlobGCManager:markSweep() Got 0 extents.
-2025-10-08T02:00:11.109Z 	 info: BlobGCManager:markSweep() Get referred extents.
-2025-10-08T02:00:11.109Z 	 info: BlobGCManager:markSweep() Got referred extents, unreferenced extents count is 0.
-2025-10-08T02:00:11.109Z 	 info: BlobGCManager:markSweepLoop() Mark and sweep finished, taken 1ms.
-2025-10-08T02:00:11.109Z 	 info: BlobGCManager:markSweepLoop() Sleep for 600000ms.
-2025-10-08T02:00:11.122Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:00:11.123Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:01:11.124Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:01:11.125Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:02:11.126Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:02:11.126Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:03:11.127Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:03:11.127Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:04:11.128Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:04:11.128Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:05:11.125Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:05:11.126Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:06:11.126Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:06:11.126Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:07:11.124Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:07:11.125Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:08:05.711Z 87d45876-1af2-4a16-a82d-00940be23c78 info: BlobStorageContextMiddleware: RequestMethod=GET RequestURL=http://127.0.0.1/devstoreaccount1/b3?restype=container&comp=list RequestHeaders:{"host":"127.0.0.1:10000","user-agent":"azsdk-python-storage-blob/12.26.0 Python/3.13.7 (Windows-11-10.0.26100-SP0)","accept-encoding":"gzip, deflate","accept":"application/xml","connection":"keep-alive","x-ms-version":"2025-07-05","x-ms-date":"Wed, 08 Oct 2025 02:08:05 GMT","x-ms-client-request-id":"a0b0a68d-a3eb-11f0-a750-e85c5f7ada5c","authorization":"SharedKey devstoreaccount1:vLa8eGCUfkZ6n5YwZRMBiIibUUcmrjwsXyHNCX0nCag="} ClientIP=172.18.0.1 Protocol=http HTTPVersion=1.1
-2025-10-08T02:08:05.712Z 87d45876-1af2-4a16-a82d-00940be23c78 error: ErrorMiddleware: Received a MiddlewareError, fill error information to HTTP response
-2025-10-08T02:08:05.713Z 87d45876-1af2-4a16-a82d-00940be23c78 error: ErrorMiddleware: ErrorName=StorageError ErrorMessage=The specified resource name length is not within the permissible limits.  ErrorHTTPStatusCode=400 ErrorHTTPStatusMessage=The specified resource name length is not within the permissible limits. ErrorHTTPHeaders={"x-ms-error-code":"OutOfRangeInput","x-ms-request-id":"87d45876-1af2-4a16-a82d-00940be23c78"} ErrorHTTPBody="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Error>\n  <Code>OutOfRangeInput</Code>\n  <Message>The specified resource name length is not within the permissible limits.\nRequestId:87d45876-1af2-4a16-a82d-00940be23c78\nTime:2025-10-08T02:08:05.712Z</Message>\n</Error>" ErrorStack="StorageError: The specified resource name length is not within the permissible limits.\n    at StorageErrorFactory.getOutOfRangeName (/opt/azurite/dist/src/blob/errors/StorageErrorFactory.js:247:16)\n    at validateContainerName (/opt/azurite/dist/src/blob/utils/utils.js:104:45)\n    at blobStorageContextMiddleware (/opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:134:43)\n    at /opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:15:16\n    at Layer.handle [as handle_request] (/opt/azurite/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/opt/azurite/node_modules/express/lib/router/index.js:328:13)\n    at /opt/azurite/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/opt/azurite/node_modules/express/lib/router/index.js:346:12)\n    at next (/opt/azurite/node_modules/express/lib/router/index.js:280:10)\n    at logger (/opt/azurite/node_modules/morgan/index.js:144:5)"
-2025-10-08T02:08:05.713Z 87d45876-1af2-4a16-a82d-00940be23c78 error: ErrorMiddleware: Set HTTP code: 400
-2025-10-08T02:08:05.713Z 87d45876-1af2-4a16-a82d-00940be23c78 error: ErrorMiddleware: Set HTTP status message: The specified resource name length is not within the permissible limits.
-2025-10-08T02:08:05.713Z 87d45876-1af2-4a16-a82d-00940be23c78 error: ErrorMiddleware: Set HTTP Header: x-ms-error-code=OutOfRangeInput
-2025-10-08T02:08:05.713Z 87d45876-1af2-4a16-a82d-00940be23c78 error: ErrorMiddleware: Set HTTP Header: x-ms-request-id=87d45876-1af2-4a16-a82d-00940be23c78
-2025-10-08T02:08:05.713Z 87d45876-1af2-4a16-a82d-00940be23c78 error: ErrorMiddleware: Set content type: application/xml
-2025-10-08T02:08:05.713Z 87d45876-1af2-4a16-a82d-00940be23c78 error: ErrorMiddleware: Set HTTP body: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Error>\n  <Code>OutOfRangeInput</Code>\n  <Message>The specified resource name length is not within the permissible limits.\nRequestId:87d45876-1af2-4a16-a82d-00940be23c78\nTime:2025-10-08T02:08:05.712Z</Message>\n</Error>"
-2025-10-08T02:08:05.713Z 87d45876-1af2-4a16-a82d-00940be23c78 verbose: Send Blob telemetry: B_Service_SetProperties
-2025-10-08T02:08:05.713Z 87d45876-1af2-4a16-a82d-00940be23c78 info: EndMiddleware: End response. TotalTimeInMS=2 StatusCode=400 StatusMessage=The specified resource name length is not within the permissible limits. Headers={"server":"Azurite-Blob/3.35.0","x-ms-error-code":"OutOfRangeInput","x-ms-request-id":"87d45876-1af2-4a16-a82d-00940be23c78","content-type":"application/xml"}
-2025-10-08T02:08:11.126Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:08:11.126Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:09:11.127Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:09:11.127Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:10:11.080Z 	 info: BlobGCManager:markSweepLoop() Start next mark and sweep.
-2025-10-08T02:10:11.080Z 	 info: BlobGCManager:markSweep() Get all extents.
-2025-10-08T02:10:11.080Z 	 info: BlobGCManager:markSweep() Got 0 extents.
-2025-10-08T02:10:11.080Z 	 info: BlobGCManager:markSweep() Get referred extents.
-2025-10-08T02:10:11.081Z 	 info: BlobGCManager:markSweep() Got referred extents, unreferenced extents count is 0.
-2025-10-08T02:10:11.081Z 	 info: BlobGCManager:markSweepLoop() Mark and sweep finished, taken 1ms.
-2025-10-08T02:10:11.081Z 	 info: BlobGCManager:markSweepLoop() Sleep for 600000ms.
-2025-10-08T02:10:11.125Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:10:11.125Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:11:11.126Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:11:11.126Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:12:11.128Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:12:11.128Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:13:11.129Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:13:11.129Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:14:11.130Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:14:11.130Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:14:42.192Z ab974879-54ef-4f09-93df-def1cd342c92 info: BlobStorageContextMiddleware: RequestMethod=GET RequestURL=http://127.0.0.1/devstoreaccount1/b3?restype=container&comp=list RequestHeaders:{"host":"127.0.0.1:10000","user-agent":"azsdk-python-storage-blob/12.26.0 Python/3.13.7 (Windows-11-10.0.26100-SP0)","accept-encoding":"gzip, deflate","accept":"application/xml","connection":"keep-alive","x-ms-version":"2025-07-05","x-ms-date":"Wed, 08 Oct 2025 02:14:42 GMT","x-ms-client-request-id":"8cff736a-a3ec-11f0-aa91-e85c5f7ada5c","authorization":"SharedKey devstoreaccount1:DNEozlunp409DWuk3A4rO3nI/Er/XMYGJkZwCL0DTis="} ClientIP=172.18.0.1 Protocol=http HTTPVersion=1.1
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 error: ErrorMiddleware: Received a MiddlewareError, fill error information to HTTP response
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 error: ErrorMiddleware: ErrorName=StorageError ErrorMessage=The specified resource name length is not within the permissible limits.  ErrorHTTPStatusCode=400 ErrorHTTPStatusMessage=The specified resource name length is not within the permissible limits. ErrorHTTPHeaders={"x-ms-error-code":"OutOfRangeInput","x-ms-request-id":"ab974879-54ef-4f09-93df-def1cd342c92"} ErrorHTTPBody="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Error>\n  <Code>OutOfRangeInput</Code>\n  <Message>The specified resource name length is not within the permissible limits.\nRequestId:ab974879-54ef-4f09-93df-def1cd342c92\nTime:2025-10-08T02:14:42.192Z</Message>\n</Error>" ErrorStack="StorageError: The specified resource name length is not within the permissible limits.\n    at StorageErrorFactory.getOutOfRangeName (/opt/azurite/dist/src/blob/errors/StorageErrorFactory.js:247:16)\n    at validateContainerName (/opt/azurite/dist/src/blob/utils/utils.js:104:45)\n    at blobStorageContextMiddleware (/opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:134:43)\n    at /opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:15:16\n    at Layer.handle [as handle_request] (/opt/azurite/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/opt/azurite/node_modules/express/lib/router/index.js:328:13)\n    at /opt/azurite/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/opt/azurite/node_modules/express/lib/router/index.js:346:12)\n    at next (/opt/azurite/node_modules/express/lib/router/index.js:280:10)\n    at logger (/opt/azurite/node_modules/morgan/index.js:144:5)"
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 error: ErrorMiddleware: Set HTTP code: 400
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 error: ErrorMiddleware: Set HTTP status message: The specified resource name length is not within the permissible limits.
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 error: ErrorMiddleware: Set HTTP Header: x-ms-error-code=OutOfRangeInput
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 error: ErrorMiddleware: Set HTTP Header: x-ms-request-id=ab974879-54ef-4f09-93df-def1cd342c92
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 error: ErrorMiddleware: Set content type: application/xml
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 error: ErrorMiddleware: Set HTTP body: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Error>\n  <Code>OutOfRangeInput</Code>\n  <Message>The specified resource name length is not within the permissible limits.\nRequestId:ab974879-54ef-4f09-93df-def1cd342c92\nTime:2025-10-08T02:14:42.192Z</Message>\n</Error>"
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 verbose: Send Blob telemetry: B_Service_SetProperties
-2025-10-08T02:14:42.193Z ab974879-54ef-4f09-93df-def1cd342c92 info: EndMiddleware: End response. TotalTimeInMS=1 StatusCode=400 StatusMessage=The specified resource name length is not within the permissible limits. Headers={"server":"Azurite-Blob/3.35.0","x-ms-error-code":"OutOfRangeInput","x-ms-request-id":"ab974879-54ef-4f09-93df-def1cd342c92","content-type":"application/xml"}
-2025-10-08T02:14:50.327Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 info: BlobStorageContextMiddleware: RequestMethod=GET RequestURL=http://127.0.0.1/devstoreaccount1/b3?restype=container&comp=list RequestHeaders:{"host":"127.0.0.1:10000","user-agent":"azsdk-python-storage-blob/12.26.0 Python/3.13.7 (Windows-11-10.0.26100-SP0)","accept-encoding":"gzip, deflate","accept":"application/xml","connection":"keep-alive","x-ms-version":"2025-07-05","x-ms-date":"Wed, 08 Oct 2025 02:14:50 GMT","x-ms-client-request-id":"91dc54a7-a3ec-11f0-9387-e85c5f7ada5c","authorization":"SharedKey devstoreaccount1:HrPKCxkxJgS0EXVb+IObJqp76UuLzNoXpHsV0nLK/Jc="} ClientIP=172.18.0.1 Protocol=http HTTPVersion=1.1
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 error: ErrorMiddleware: Received a MiddlewareError, fill error information to HTTP response
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 error: ErrorMiddleware: ErrorName=StorageError ErrorMessage=The specified resource name length is not within the permissible limits.  ErrorHTTPStatusCode=400 ErrorHTTPStatusMessage=The specified resource name length is not within the permissible limits. ErrorHTTPHeaders={"x-ms-error-code":"OutOfRangeInput","x-ms-request-id":"47d4605d-e4fd-4b1c-91a0-45921524b0f7"} ErrorHTTPBody="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Error>\n  <Code>OutOfRangeInput</Code>\n  <Message>The specified resource name length is not within the permissible limits.\nRequestId:47d4605d-e4fd-4b1c-91a0-45921524b0f7\nTime:2025-10-08T02:14:50.327Z</Message>\n</Error>" ErrorStack="StorageError: The specified resource name length is not within the permissible limits.\n    at StorageErrorFactory.getOutOfRangeName (/opt/azurite/dist/src/blob/errors/StorageErrorFactory.js:247:16)\n    at validateContainerName (/opt/azurite/dist/src/blob/utils/utils.js:104:45)\n    at blobStorageContextMiddleware (/opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:134:43)\n    at /opt/azurite/dist/src/blob/middlewares/blobStorageContext.middleware.js:15:16\n    at Layer.handle [as handle_request] (/opt/azurite/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/opt/azurite/node_modules/express/lib/router/index.js:328:13)\n    at /opt/azurite/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/opt/azurite/node_modules/express/lib/router/index.js:346:12)\n    at next (/opt/azurite/node_modules/express/lib/router/index.js:280:10)\n    at logger (/opt/azurite/node_modules/morgan/index.js:144:5)"
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 error: ErrorMiddleware: Set HTTP code: 400
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 error: ErrorMiddleware: Set HTTP status message: The specified resource name length is not within the permissible limits.
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 error: ErrorMiddleware: Set HTTP Header: x-ms-error-code=OutOfRangeInput
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 error: ErrorMiddleware: Set HTTP Header: x-ms-request-id=47d4605d-e4fd-4b1c-91a0-45921524b0f7
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 error: ErrorMiddleware: Set content type: application/xml
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 error: ErrorMiddleware: Set HTTP body: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Error>\n  <Code>OutOfRangeInput</Code>\n  <Message>The specified resource name length is not within the permissible limits.\nRequestId:47d4605d-e4fd-4b1c-91a0-45921524b0f7\nTime:2025-10-08T02:14:50.327Z</Message>\n</Error>"
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 verbose: Send Blob telemetry: B_Service_SetProperties
-2025-10-08T02:14:50.328Z 47d4605d-e4fd-4b1c-91a0-45921524b0f7 info: EndMiddleware: End response. TotalTimeInMS=1 StatusCode=400 StatusMessage=The specified resource name length is not within the permissible limits. Headers={"server":"Azurite-Blob/3.35.0","x-ms-error-code":"OutOfRangeInput","x-ms-request-id":"47d4605d-e4fd-4b1c-91a0-45921524b0f7","content-type":"application/xml"}
-2025-10-08T02:15:11.132Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:15:11.132Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:16:11.133Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:16:11.133Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:17:11.134Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:17:11.134Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:18:11.135Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:18:11.135Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:19:11.136Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:19:11.137Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:20:11.055Z 	 info: BlobGCManager:markSweepLoop() Start next mark and sweep.
-2025-10-08T02:20:11.055Z 	 info: BlobGCManager:markSweep() Get all extents.
-2025-10-08T02:20:11.055Z 	 info: BlobGCManager:markSweep() Got 0 extents.
-2025-10-08T02:20:11.056Z 	 info: BlobGCManager:markSweep() Get referred extents.
-2025-10-08T02:20:11.056Z 	 info: BlobGCManager:markSweep() Got referred extents, unreferenced extents count is 0.
-2025-10-08T02:20:11.056Z 	 info: BlobGCManager:markSweepLoop() Mark and sweep finished, taken 1ms.
-2025-10-08T02:20:11.056Z 	 info: BlobGCManager:markSweepLoop() Sleep for 600000ms.
-2025-10-08T02:20:11.134Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:20:11.134Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
-2025-10-08T02:21:11.135Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
-2025-10-08T02:21:11.135Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T05:29:05.452Z 	 info: Azurite Blob service is starting on 0.0.0.0:10000
+2025-10-08T05:29:05.460Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T05:29:05.461Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T05:29:05.488Z 	 info: BlobGCManager:start() Starting BlobGCManager. Set status to Initializing.
+2025-10-08T05:29:05.488Z 	 info: BlobGCManager:start() Trigger mark and sweep loop. Set status to Running.
+2025-10-08T05:29:05.488Z 	 info: BlobGCManager:markSweepLoop() Start next mark and sweep.
+2025-10-08T05:29:05.489Z 	 info: BlobGCManager:markSweep() Get all extents.
+2025-10-08T05:29:05.490Z 	 info: BlobGCManager:start() BlobGCManager successfully started.
+2025-10-08T05:29:05.494Z 	 info: BlobGCManager:markSweep() Got 0 extents.
+2025-10-08T05:29:05.494Z 	 info: BlobGCManager:markSweep() Get referred extents.
+2025-10-08T05:29:05.495Z 	 info: BlobGCManager:markSweep() Got referred extents, unreferenced extents count is 0.
+2025-10-08T05:29:05.495Z 	 info: BlobGCManager:markSweepLoop() Mark and sweep finished, taken 6ms.
+2025-10-08T05:29:05.495Z 	 info: BlobGCManager:markSweepLoop() Sleep for 600000ms.
+2025-10-08T05:29:05.503Z 	 info: Azurite Blob service successfully listens on http://0.0.0.0:10000
+2025-10-08T05:29:05.508Z 	 info: InstaceID d94c8c58-e4eb-43af-81c0-23cbdd26e88e, SessionID 9542aeeb-9b2e-4a0d-81ce-2c0d6ae513ef.
+2025-10-08T05:29:05.564Z 	 info: Telemetry initialize successfully.
+2025-10-08T05:29:05.571Z 	 verbose: Send start telemetry
+2025-10-08T05:30:05.464Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T05:30:05.464Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T05:31:05.466Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T05:31:05.466Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T05:32:05.470Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T05:32:05.470Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T05:33:05.473Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T05:33:05.473Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T05:34:05.476Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T05:34:05.476Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T05:34:13.788Z 	 verbose: Send stop telemetry
+2025-10-08T05:34:13.788Z 	 info: Azurite Blob service is closing...
+2025-10-08T05:34:13.788Z 	 info: BlobGCManager:close() Start closing BlobGCManager. Set status to Closing.
+2025-10-08T05:34:13.789Z 	 info: BlobGCManager:start() Mark and sweep loop is closed.
+2025-10-08T05:34:13.789Z 	 info: BlobGCManager:close() BlobGCManager successfully closed. Set status to Closed.
+2025-10-08T05:34:13.789Z 	 info: Azurite Blob service successfully closed
