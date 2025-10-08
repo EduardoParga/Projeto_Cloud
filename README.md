@@ -1,5 +1,5 @@
 # ☁️ Projeto Cloud  
-**Repositório da disciplina de Projeto Cloud — Quarta-feira de manhã**  
+**Repositório da disciplina de Projeto Cloud — Quarta-feira de Noite**  
 **Professor:** Rafael  
 
 ## 👥 Alunos  
