@@ -1,90 +1,93 @@
-☁️ Projeto Cloud
+# ☁️ Projeto Cloud  
+**Repositório da disciplina de Projeto Cloud — Quarta-feira de manhã**  
+**Professor:** Rafael  
 
-Repositório da disciplina de Projeto Cloud — Quarta-feira de manhã
-Professor: Rafael
-Alunos:
+## 👥 Alunos  
+- **Eduardo Parga**  
+- **Enzo Rafael**  
 
-Eduardo Parga
+---
 
-Enzo Rafael
+## 🚀 Projeto: Pipeline Cloud para Processamento de Cotações da B3  
 
-🚀 Projeto: Pipeline Cloud para Processamento de Cotações da B3
+Este projeto demonstra como construir uma arquitetura completa em nuvem para **coleta, transformação, armazenamento e análise** de dados da **B3 (Bolsa de Valores do Brasil)**, utilizando **serviços do Microsoft Azure**.  
 
-Este projeto demonstra como construir uma arquitetura completa em nuvem para coleta, transformação, armazenamento e análise de dados da B3 (Bolsa de Valores do Brasil), utilizando serviços do Microsoft Azure.
+O objetivo é simular um ambiente de **Big Data**, aplicando práticas de **ETL**, **computação serverless**, **banco de dados em nuvem** e **containers Docker**, de forma automatizada, escalável e eficiente.  
 
-O objetivo é simular um ambiente de Big Data, aplicando práticas de ETL, computação serverless, banco de dados em nuvem e containers Docker, de forma automatizada, escalável e eficiente.
+---
 
-🎯 Objetivos
+## 🎯 Objetivos  
 
-Compreender, na prática, a criação de pipelines de dados em ambiente cloud.
+- Criar pipelines de dados em ambiente cloud.  
+- Integrar diferentes serviços de forma automatizada.  
+- Transformar dados brutos em informações úteis para análise.  
 
-Aplicar integração entre diferentes serviços e processos automatizados.
+---
 
-Converter dados brutos em informações úteis para relatórios e análises.
+## 📊 Contexto  
 
-📊 Contexto
+A **B3** disponibiliza diariamente arquivos com informações de mercado — ativos, datas, preços de abertura e fechamento, volume negociado, etc.  
 
-A B3 divulga diariamente arquivos contendo informações de mercado (ativos, datas, preços de abertura e fechamento, volume negociado, entre outros).
-Nosso desafio é automatizar a coleta, o tratamento e o armazenamento desses dados, preparando-os para análises e dashboards em ferramentas como o Power BI.
+O desafio do projeto é **automatizar a coleta, o tratamento e o armazenamento** desses arquivos, tornando-os prontos para **análises e dashboards** em ferramentas como **Power BI** ou **Azure Synapse Analytics**.  
 
-🏗️ Arquitetura da Solução
+---
 
-Azure Storage Account: armazenamento dos arquivos originais e processados.
+## 🏗️ Arquitetura da Solução  
 
-Azure Data Factory: responsável pelo fluxo ETL (extração, transformação e carga).
+| Serviço | Função |
+|----------|--------|
+| **Azure Storage Account** | Armazena os arquivos originais e processados |
+| **Azure Data Factory** | Responsável pelo processo ETL (Extração, Transformação e Carga) |
+| **Azure Function** | Insere os dados de forma incremental no banco |
+| **Azure SQL Database** | Guarda os dados tratados e prontos para análise |
+| **Logic Apps** | Gera notificações e integrações automáticas |
+| **Docker + Azure Container Instance** | Simula a ingestão dos arquivos da B3 |
 
-Azure Function: faz a inserção incremental dos dados no banco de dados.
+---
 
-Azure SQL Database: guarda as informações já tratadas e normalizadas.
+## 🔄 Fluxo do Pipeline  
 
-Logic Apps: automatiza alertas e integrações entre os serviços.
+1. **Ingestão:** o container Docker envia os arquivos para o Azure Blob Storage.  
+2. **Transformação:** o Data Factory processa e estrutura os dados.  
+3. **Carga:** a Azure Function grava as informações no banco SQL.  
+4. **Automação:** o Logic Apps dispara alertas e fluxos automáticos.  
+5. **Visualização:** os dados tratados são usados em dashboards e relatórios.  
 
-Docker + Azure Container Instance: simula o envio de arquivos para o ambiente cloud.
+---
 
-🔄 Fluxo do Pipeline
+## 🧩 Tecnologias Utilizadas  
 
-Ingestão: container Docker envia os arquivos para o Azure Blob Storage.
+- **Python** 🐍  
+- **Microsoft Azure** ☁️  
+- **Azure Data Factory**  
+- **Azure Functions**  
+- **Azure SQL Database**  
+- **Logic Apps**  
+- **Docker** 🐳  
+- **Power BI** 📊  
 
-Transformação: o Data Factory executa o processo de limpeza e formatação.
+---
 
-Carga: Azure Function insere os dados no banco de forma incremental.
+## 📦 Conteúdo do Repositório  
 
-Automação: Logic Apps envia notificações e aciona fluxos automáticos.
+- 📁 Documento com a **arquitetura e fluxo do projeto**  
+- ⚙️ Pipeline configurado no **Azure Data Factory**  
+- 🧠 Função **Python** para carga e atualização dos dados  
+- 🐳 **Container Docker** para simulação de ingestão  
+- 🔔 Exemplo de **Logic App** para automação e alertas  
 
-Visualização: dados disponíveis para dashboards e relatórios.
+---
 
-📦 Conteúdo do Repositório
+## 🔗 Referências Úteis  
 
-Documento com o desenho da arquitetura e o fluxo completo do projeto.
+- [Cotações Históricas – Mercado à Vista](https://www.b3.com.br/pt_br/market-data-e-indices/mercado-a-vista/arquivos-historicos/)  
+- [Boletim Diário do Mercado](https://www.b3.com.br/pt_br/market-data-e-indices/servicos/boletim-diario-do-mercado/)  
+- [Layout dos Arquivos da B3](https://www.b3.com.br/pt_br/market-data-e-indices/servicos/layout-dos-arquivos/)  
 
-Pipeline configurado no Azure Data Factory.
+---
 
-Função Python para carga e atualização de dados.
+## ⚙️ Como Executar  
 
-Container Docker para ingestão simulada dos arquivos da B3.
-
-Exemplo de Logic App para automação e notificações.
-
-🔗 Referências Úteis (B3)
-
-Cotações Históricas – Mercado à Vista
-
-Boletim Diário do Mercado
-
-Layout dos Arquivos da B3
-
-⚙️ Como Executar
-
-1. Clonar o repositório:
-
+### 1️⃣ Clonar o repositório  
+```bash
 git clone <URL_DO_REPOSITORIO>
-
-
-2. Instalar dependências:
-
-pip install -r requirements.txt
-
-
-3. Executar o pipeline:
-
-python extract.py
