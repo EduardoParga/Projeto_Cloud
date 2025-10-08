@@ -1,16 +1,9 @@
-version: "3.8"
-services:
-  azurite:
-    image: mcr.microsoft.com/azure-storage/azurite
-    ports:
-      - "10000:10000"
-      - "10001:10001"
-    volumes:
-      - ./azurite_data:/data
-    command: "azurite-blob --blobHost 0.0.0.0 --blobPort 10000 --location /data --debug /data/azurite.log"
+version: '3.8'
 
+services:
   postgres:
     image: postgres:15
+    container_name: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -18,25 +11,13 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+      - ./pgdata:/var/lib/postgresql/data
 
-  app:
-    build: .
-    depends_on:
-      - azurite
-      - postgres
-    environment:
-      AZURE_STORAGE_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
-      AZURE_BLOB_CONTAINER: "b3"
-      POSTGRES_HOST: "postgres"
-      POSTGRES_PORT: "5432"
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite
+    command: "azurite-blob --loose --blobHost 0.0.0.0"
+    ports:
+      - "10000:10000"
     volumes:
-      - ./:/app:cached
-    tty: true
-
-volumes:
-  pgdata:
+      - ./azurite_data:/data

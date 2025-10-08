@@ -9,12 +9,12 @@ import glob
 
 from lxml import etree
 
-POINTER_BLOB = "_LATEST_B3_XML.txt"  # escrito pelo extract.py
+POINTER_BLOB = "_LATEST_B3_XML.txt" 
 LOCAL_POINTER = os.path.join("dados_b3", POINTER_BLOB)
 
-# importa get_file_from_blob / persist_quotes se existirem
+
 try:
-    from load_azure import get_file_from_blob
+    from azure_storage import get_file_from_blob
 except Exception:
     get_file_from_blob = None
 
@@ -62,7 +62,7 @@ def parse_pricrpt(xml_bytes: bytes) -> List[Dict]:
         if not (ativo and dt):
             continue
 
-        # coletar possíveis campos de preço / volume
+       
         frst = first_text(pr, './/*[local-name()="FrstPric"][1]/text()')
         last = first_text(pr, './/*[local-name()="LastPric"][1]/text()')
         minp = first_text(pr, './/*[local-name()="MinPric"][1]/text()')
@@ -103,7 +103,7 @@ def parse_pricrpt(xml_bytes: bytes) -> List[Dict]:
 
 
 def _read_pointer() -> Optional[str]:
-    # tenta ler ponteiro do blob primeiro
+    
     if get_file_from_blob:
         try:
             ptr = get_file_from_blob(POINTER_BLOB)
@@ -208,7 +208,7 @@ def main():
         print(f"[WARN] 0 linha(s) extraída(s) de {pointer}")
         return
 
-    # persistir: tenta persistir no banco se persist_quotes existir, senão salva CSV
+   
     if persist_quotes:
         try:
             persist_quotes(rows)

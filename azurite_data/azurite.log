@@ -153,3 +153,42 @@
 2025-10-08T02:20:11.134Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
 2025-10-08T02:21:11.135Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
 2025-10-08T02:21:11.135Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:16:03.148Z 	 info: Azurite Blob service is starting on 0.0.0.0:10000
+2025-10-08T20:16:03.149Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T20:16:03.149Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:16:03.179Z 	 info: BlobGCManager:start() Starting BlobGCManager. Set status to Initializing.
+2025-10-08T20:16:03.179Z 	 info: BlobGCManager:start() Trigger mark and sweep loop. Set status to Running.
+2025-10-08T20:16:03.179Z 	 info: BlobGCManager:markSweepLoop() Start next mark and sweep.
+2025-10-08T20:16:03.180Z 	 info: BlobGCManager:markSweep() Get all extents.
+2025-10-08T20:16:03.181Z 	 info: BlobGCManager:start() BlobGCManager successfully started.
+2025-10-08T20:16:03.183Z 	 info: BlobGCManager:markSweep() Got 0 extents.
+2025-10-08T20:16:03.183Z 	 info: BlobGCManager:markSweep() Get referred extents.
+2025-10-08T20:16:03.184Z 	 info: BlobGCManager:markSweep() Got referred extents, unreferenced extents count is 0.
+2025-10-08T20:16:03.184Z 	 info: BlobGCManager:markSweepLoop() Mark and sweep finished, taken 5ms.
+2025-10-08T20:16:03.184Z 	 info: BlobGCManager:markSweepLoop() Sleep for 600000ms.
+2025-10-08T20:16:03.191Z 	 info: Azurite Blob service successfully listens on http://0.0.0.0:10000
+2025-10-08T20:16:03.194Z 	 info: InstaceID d71f99fd-2707-4809-8a36-1b8f59660cbf, SessionID 82128797-2545-41cf-9578-8e41efedb3a6.
+2025-10-08T20:16:03.233Z 	 info: Telemetry initialize successfully.
+2025-10-08T20:16:03.237Z 	 verbose: Send start telemetry
+2025-10-08T20:17:03.152Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T20:17:03.152Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:18:03.154Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T20:18:03.155Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:19:03.156Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T20:19:03.157Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:20:03.159Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T20:20:03.160Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:21:03.161Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T20:21:03.162Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:22:03.164Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T20:22:03.165Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:23:03.167Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T20:23:03.167Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:24:03.169Z 	 info: AccountDataStore:init() Refresh accounts from environment variable AZURITE_ACCOUNTS with value undefined
+2025-10-08T20:24:03.169Z 	 info: AccountDataStore:init() Fallback to default emulator account devstoreaccount1.
+2025-10-08T20:24:20.685Z 	 verbose: Send stop telemetry
+2025-10-08T20:24:20.686Z 	 info: Azurite Blob service is closing...
+2025-10-08T20:24:20.687Z 	 info: BlobGCManager:close() Start closing BlobGCManager. Set status to Closing.
+2025-10-08T20:24:20.687Z 	 info: BlobGCManager:start() Mark and sweep loop is closed.
+2025-10-08T20:24:20.687Z 	 info: BlobGCManager:close() BlobGCManager successfully closed. Set status to Closed.
+2025-10-08T20:24:20.688Z 	 info: Azurite Blob service successfully closed
