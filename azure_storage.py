@@ -1,33 +1,37 @@
+import os
+from typing import Optional
 from azure.storage.blob import BlobServiceClient
-from azure.storage.blob import PublicAccess
 
-AZURE_BLOB_CONNECTION = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://localhost:10000/devstoreaccount1;"
-CONTAINER = "dados-pregao-bolsa"
+CONN = os.environ.get("AZURE_STORAGE_CONNECTION_STRING") or os.environ.get("AZURE_BLOB_CONNECTION")
+if not CONN:
+    raise RuntimeError(
+        "Defina AZURE_STORAGE_CONNECTION_STRING com a connection string do Azurite. Exemplo no PowerShell:\n"
+        "$env:AZURE_STORAGE_CONNECTION_STRING='DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;'"
+    )
 
-def save_file_to_blob(file_name, local_path_file):
-    service = BlobServiceClient.from_connection_string(AZURE_BLOB_CONNECTION)
-    container = service.get_container_client(CONTAINER)
+_client = BlobServiceClient.from_connection_string(CONN)
+CONTAINER = os.environ.get("AZURE_BLOB_CONTAINER", "b3")
+
+def _ensure_container():
+    c = _client.get_container_client(CONTAINER)
     try:
-        service.create_container(CONTAINER, public_access=PublicAccess.Container)
+        c.create_container()
     except Exception:
-        pass # container já existe
+        pass
+    return c
 
-    with open(local_path_file, "rb") as data:
-        container.upload_blob(name=file_name, data=data, overwrite=True)
+def upload_to_azure(blob_name: str, local_path: str):
+    c = _ensure_container()
+    with open(local_path, "rb") as f:
+        data = f.read()
+    c.upload_blob(name=blob_name, data=data, overwrite=True, max_concurrency=1)
+    return True
 
-def get_file_from_blob(file_name):
-    service = BlobServiceClient.from_connection_string(AZURE_BLOB_CONNECTION)
-    container = service.get_container_client(CONTAINER)
+def get_file_from_blob(blob_name: str) -> Optional[bytes]:
+    c = _ensure_container()
+    blob = c.get_blob_client(blob_name)
     try:
-        service.create_container(CONTAINER, public_access=PublicAccess.Container)
+        data = blob.download_blob().readall()
+        return data
     except Exception:
-        pass # container já existe
-
-    blob_client = container.get_blob_client(file_name)
-    try:
-        download_stream = blob_client.download_blob()
-        blob_content = download_stream.readall()  # retorna bytes
-        return blob_content
-    except Exception:
-        print("Error ao obter arquivo")
         return None

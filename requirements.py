@@ -1,2 +1,4 @@
 requests
+azure-storage-blob>=12.0
 lxml
+psycopg2-binary
