@@ -1,14 +1,13 @@
 import json, os, sys, glob
 
 candidates = []
-
-candidates += glob.glob(os.path.join(os.getcwd(), "azurite_data__azuritedb.json"))
-candidates += glob.glob(os.path.join(os.getcwd(), "azurite_data", "azuritedb.json"))
-candidates += glob.glob(os.path.join(os.getcwd(), "azuritedb.json"))
+candidates += glob.glob(os.path.join(os.getcwd(), "azurite_data__azurite_db_*.json"))
+candidates += glob.glob(os.path.join(os.getcwd(), "azurite_data", "*azurite_db_*.json"))
+candidates += glob.glob(os.path.join(os.getcwd(), "*azurite_db_*.json"))
 
 if not candidates:
     print("Nenhum arquivo azurite_db json encontrado automaticamente. Rode:")
-    print("Get-ChildItem -Recurse -Filter 'azuritedb*.json' | Select-Object -First 50")
+    print("Get-ChildItem -Recurse -Filter '*azurite_db_*.json' | Select-Object -First 50")
     sys.exit(1)
 
 for path in candidates:

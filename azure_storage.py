@@ -4,10 +4,7 @@ from azure.storage.blob import BlobServiceClient
 
 CONN = os.environ.get("AZURE_STORAGE_CONNECTION_STRING") or os.environ.get("AZURE_BLOB_CONNECTION")
 if not CONN:
-    raise RuntimeError(
-        "Defina AZURE_STORAGE_CONNECTION_STRING com a connection string do Azurite. Exemplo no PowerShell:\n"
-        "$env:AZURE_STORAGE_CONNECTION_STRING='DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;'"
-    )
+    raise RuntimeError("AZURE_STORAGE_CONNECTION_STRING não definido.")
 
 _client = BlobServiceClient.from_connection_string(CONN)
 CONTAINER = os.environ.get("AZURE_BLOB_CONTAINER", "b3")
@@ -20,7 +17,9 @@ def _ensure_container():
         pass
     return c
 
-def upload_to_azure(blob_name: str, local_path: str):
+def upload_to_azure(local_path: str, blob_name: Optional[str] = None):
+    if blob_name is None:
+        blob_name = os.path.basename(local_path)
     c = _ensure_container()
     with open(local_path, "rb") as f:
         data = f.read()

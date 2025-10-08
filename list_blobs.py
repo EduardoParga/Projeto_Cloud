@@ -14,7 +14,7 @@ try:
     found = False
     for b in c.list_blobs():
         found = True
-        print(f"{b.name}  size={b.size}")
+        print(b.name, b.size)
     if not found:
         print("Nenhum blob encontrado.")
 except Exception as e:
