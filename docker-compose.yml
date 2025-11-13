@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 services:
   postgres:
     image: postgres:16
@@ -18,3 +19,28 @@ services:
 
 volumes:
   b3-pgdata:
+=======
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite
+    command: "azurite-blob --loose --blobHost 0.0.0.0"
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./azurite_data:/data
+>>>>>>> c5b4dfd60e268e8c5bb06c8bdafaf9d1eb16fd14

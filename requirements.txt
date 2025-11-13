@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 requests>=2.31.0
 azure-storage-blob>=12.17.0
 azure-cosmos>=4.0.0
@@ -9,3 +10,9 @@ Flask-CORS==4.0.0
 python-dotenv==1.0.0
 gunicorn==21.2.0
 azure-functions>=1.11.0
+=======
+﻿requests
+azure-storage-blob>=12.0
+lxml
+psycopg2-binary
+>>>>>>> c5b4dfd60e268e8c5bb06c8bdafaf9d1eb16fd14
