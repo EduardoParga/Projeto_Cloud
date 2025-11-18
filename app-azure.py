@@ -8,9 +8,9 @@ import logging
 app = Flask(__name__)
 CORS(app)
 
-# Configuração do Azure SQL Database
+# Configuração do Azure SQL Database - DRIVER CORRETO
 DATABASE_URL = os.environ.get('DATABASE_URL', 
-    'DRIVER={ODBC Driver 18 for SQL Server};SERVER=sql-b3-server.database.windows.net;DATABASE=b3database;UID=b3admin;PWD=SenhaSegura123!;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;')
+    'DRIVER={ODBC Driver 17 for SQL Server};SERVER=sqlb3server123.database.windows.net;DATABASE=b3database;UID=b3admin;PWD=SenhaSegura123!;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;')
 
 def get_db_connection():
     try:
