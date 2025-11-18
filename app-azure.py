@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import pyodbc
+import pymssql
 import os
 from datetime import datetime, timedelta
 import logging
@@ -8,13 +8,22 @@ import logging
 app = Flask(__name__)
 CORS(app)
 
-# Configuração do Azure SQL Database - DRIVER CORRETO
-DATABASE_URL = os.environ.get('DATABASE_URL', 
-    'DRIVER={ODBC Driver 17 for SQL Server};SERVER=sqlb3server123.database.windows.net;DATABASE=b3database;UID=b3admin;PWD=SenhaSegura123!;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;')
+# Configuração do Azure SQL Database - SEM ODBC
+DATABASE_CONFIG = {
+    'server': 'sqlb3server123.database.windows.net',
+    'database': 'b3database',
+    'username': 'b3admin',
+    'password': 'SenhaSegura123!'
+}
 
 def get_db_connection():
     try:
-        return pyodbc.connect(DATABASE_URL)
+        return pymssql.connect(
+            server=DATABASE_CONFIG['server'],
+            user=DATABASE_CONFIG['username'],
+            password=DATABASE_CONFIG['password'],
+            database=DATABASE_CONFIG['database']
+        )
     except Exception as e:
         logging.error(f"Erro conexão BD: {e}")
         raise
@@ -49,7 +58,7 @@ def get_cotacoes_ativo(ativo):
         cur.execute('''
             SELECT DataPregao, Abertura, Fechamento, Volume
             FROM Cotacoes 
-            WHERE Ativo = ? AND DataPregao >= ?
+            WHERE Ativo = %s AND DataPregao >= %s
             ORDER BY DataPregao DESC
         ''', (ativo, start_date.date()))
         
@@ -83,7 +92,7 @@ def get_resumo_ativo(ativo):
                 SUM(Volume) as volume_total,
                 MAX(DataPregao) as ultima_data
             FROM Cotacoes 
-            WHERE Ativo = ?
+            WHERE Ativo = %s
         ''', (ativo,))
         
         result = cur.fetchone()
@@ -102,15 +111,6 @@ def get_resumo_ativo(ativo):
         return jsonify(resumo)
     except Exception as e:
         return jsonify({'error': f'Erro ao buscar resumo: {str(e)}'}), 500
-
-@app.route('/api/debug/drivers', methods=['GET'])
-def debug_drivers():
-    """Lista drivers ODBC disponíveis"""
-    try:
-        drivers = pyodbc.drivers()
-        return jsonify({'drivers': drivers})
-    except Exception as e:
-        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)

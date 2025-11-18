@@ -3,7 +3,7 @@ azure-storage-blob>=12.17.0
 azure-cosmos>=4.0.0
 lxml
 SQLAlchemy>=2.0
-pyodbc>=4.0.39
+pymssql>=2.2.0
 Flask==2.3.3
 Flask-CORS==4.0.0
 python-dotenv==1.0.0
