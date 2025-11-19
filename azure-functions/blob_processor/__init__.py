@@ -28,35 +28,38 @@ def main(myblob: func.InputStream) -> None:
         
         # Ler conteúdo do blob
         blob_content = myblob.read()
-        
-        # Processar ZIP
-        with zipfile.ZipFile(io.BytesIO(blob_content), 'r') as zip_file:
-            xml_files = [f for f in zip_file.namelist() if f.endswith('.xml')]
-            
-            if not xml_files:
-                logging.warning('⚠️ Nenhum arquivo XML encontrado no ZIP')
-                return
-                
-            xml_file = xml_files[0]
-            logging.info(f'📄 Processando XML: {xml_file}')
-            
-            # Extrair e processar XML
-            with zip_file.open(xml_file) as xml_content:
-                tree = ET.parse(xml_content)
-                root = tree.getroot()
-                
-                # Extrair dados de cotações
-                cotacoes = extrair_cotacoes_b3(root, xml_file)
-                
-                if cotacoes:
-                    # Salvar no Azure SQL Database
-                    salvar_no_banco(cotacoes)
-                    
-                    logging.info(f'✅ BLOB TRIGGER CONCLUÍDO!')
-                    logging.info(f'📊 {len(cotacoes)} cotações processadas')
-                    logging.info(f'💾 Dados salvos no Azure SQL Database')
-                else:
-                    logging.warning('⚠️ Nenhuma cotação extraída do XML')
+
+        # Processar até dois níveis de ZIP aninhado
+        def find_xml_in_zip(zip_bytes, nivel=1):
+            with zipfile.ZipFile(io.BytesIO(zip_bytes), 'r') as z:
+                xml_files = [f for f in z.namelist() if f.endswith('.xml')]
+                if xml_files:
+                    xml_file = xml_files[0]
+                    logging.info(f'📄 Processando XML (nível {nivel}): {xml_file}')
+                    with z.open(xml_file) as xml_content:
+                        tree = ET.parse(xml_content)
+                        root = tree.getroot()
+                        cotacoes = extrair_cotacoes_b3(root, xml_file)
+                        if cotacoes:
+                            salvar_no_banco(cotacoes)
+                            logging.info(f'✅ BLOB TRIGGER CONCLUÍDO!')
+                            logging.info(f'📊 {len(cotacoes)} cotações processadas')
+                            logging.info(f'💾 Dados salvos no Azure SQL Database')
+                        else:
+                            logging.warning('⚠️ Nenhuma cotação extraída do XML')
+                    return True
+                # Procurar ZIP aninhado
+                zip_files = [f for f in z.namelist() if f.endswith('.zip')]
+                if zip_files and nivel < 3:
+                    inner_zip_name = zip_files[0]
+                    logging.info(f'📦 ZIP aninhado (nível {nivel}) encontrado: {inner_zip_name}')
+                    with z.open(inner_zip_name) as inner_zip_content:
+                        inner_zip_bytes = inner_zip_content.read()
+                    return find_xml_in_zip(inner_zip_bytes, nivel=nivel+1)
+                return False
+
+        if not find_xml_in_zip(blob_content, nivel=1):
+            logging.warning('⚠️ Nenhum arquivo XML encontrado em até dois níveis de ZIP aninhado')
         
     except Exception as e:
         logging.error(f'❌ ERRO BLOB TRIGGER: {str(e)}')
@@ -64,88 +67,89 @@ def main(myblob: func.InputStream) -> None:
 
 def extrair_cotacoes_b3(root, nome_arquivo):
     """
-    Extrai cotações do XML da B3
+    Extrai cotações do XML da B3 de forma robusta, igual ao parse_pricrpt local.
     """
-    logging.info('📊 Extraindo cotações do XML...')
-    
+    from lxml import etree
+    from decimal import Decimal, InvalidOperation
+    import re
+    logging.info('📊 Extraindo cotações do XML (robusto)...')
+
+    def to_decimal(x):
+        if x is None:
+            return None
+        s = str(x).strip().replace(",", ".")
+        if not s:
+            return None
+        try:
+            return Decimal(s)
+        except (InvalidOperation, ValueError):
+            return None
+
+    def to_date(s):
+        if not s:
+            return None
+        if "T" in s:
+            s = s.split("T", 1)[0]
+        try:
+            return datetime.strptime(s, "%Y-%m-%d").date()
+        except Exception:
+            return datetime.now().date()
+
+    # Converter root para lxml se necessário
+    if not hasattr(root, 'xpath'):
+        xml_str = ET.tostring(root, encoding='utf-8')
+        root = etree.fromstring(xml_str)
+
+    pricrpts = root.xpath('//*[local-name()="PricRpt"]')
+    def first_text(node, xp: str) -> str:
+        v = node.xpath(xp)
+        if isinstance(v, list):
+            v = v[0] if v else ""
+        return (v or "").strip()
+
     cotacoes = []
-    
-    # Extrair data do arquivo
-    data_str = None
-    if 'SPRE' in nome_arquivo:
-        # Formato: SPRE251118
-        data_part = nome_arquivo.split('SPRE')[1][:6]  # 251118
-        data_str = f'20{data_part}'  # 20251118
-    
-    if data_str:
-        try:
-            data_pregao = datetime.strptime(data_str, '%Y%m%d').date()
-        except:
-            data_pregao = datetime.now().date()
-    else:
-        data_pregao = datetime.now().date()
-    
-    logging.info(f'📅 Data do pregão: {data_pregao}')
-    
-    # Processar namespace do XML B3
-    namespace = {'ns': 'urn:bvmf.052.01.xsd'}
-    
-    # Buscar transações no XML
-    for finInstrm in root.findall('.//ns:FinInstrm', namespace):
-        try:
-            # Extrair símbolo do ativo
-            ativo_elem = finInstrm.find('.//ns:TckrSymb', namespace)
-            if ativo_elem is None:
-                continue
-                
-            ativo = ativo_elem.text.strip()
-            
-            # Filtrar apenas ações (termina com 3, 4, 11, etc.)
-            if not any(ativo.endswith(x) for x in ['3', '4', '11']):
-                continue
-            
-            # Buscar dados de preço
-            preco_elems = finInstrm.findall('.//ns:TradDt', namespace)
-            
-            for trade_elem in preco_elems:
-                try:
-                    # Preços
-                    abertura_elem = trade_elem.find('.//ns:FrstPric', namespace)
-                    fechamento_elem = trade_elem.find('.//ns:LastPric', namespace)
-                    volume_elem = trade_elem.find('.//ns:TtlVol', namespace)
-                    
-                    if abertura_elem is not None and fechamento_elem is not None:
-                        abertura = float(abertura_elem.text)
-                        fechamento = float(fechamento_elem.text)
-                        volume = float(volume_elem.text) if volume_elem is not None else 0
-                        
-                        cotacao = {
-                            'Ativo': ativo,
-                            'DataPregao': data_pregao,
-                            'Abertura': abertura,
-                            'Fechamento': fechamento,
-                            'Volume': int(volume)
-                        }
-                        
-                        cotacoes.append(cotacao)
-                        
-                except Exception as e:
-                    continue
-                    
-        except Exception as e:
+    for pr in pricrpts:
+        ativo = first_text(pr, './/*[local-name()="TckrSymb"][1]/text()')
+        dt = first_text(pr, './/*[local-name()="TradDt"]/*[local-name()="Dt"][1]/text()') \
+             or first_text(pr, './/*[local-name()="TradDt"][1]/text()')
+        if not (ativo and dt):
             continue
-    
-    # Agrupar por ativo (pegar apenas um registro por ativo)
-    cotacoes_finais = {}
-    for cot in cotacoes:
-        ativo = cot['Ativo']
-        if ativo not in cotacoes_finais:
-            cotacoes_finais[ativo] = cot
-            
-    resultado = list(cotacoes_finais.values())
-    logging.info(f'📈 {len(resultado)} ativos únicos extraídos')
-    
-    return resultado
+
+        frst = first_text(pr, './/*[local-name()="FrstPric"][1]/text()')
+        last = first_text(pr, './/*[local-name()="LastPric"][1]/text()')
+        minp = first_text(pr, './/*[local-name()="MinPric"][1]/text()')
+        maxp = first_text(pr, './/*[local-name()="MaxPric"][1]/text()')
+        tradavg = first_text(pr, './/*[local-name()="TradAvrgPric"][1]/text()')
+
+        ntlfinvol = first_text(pr, './/*[local-name()="NtlFinVol"][1]/text()')
+        rglrtxsqty = first_text(pr, './/*[local-name()="RglrTxsQty"][1]/text()')
+        opn_intrst = first_text(pr, './/*[local-name()="OpnIntrst"][1]/text()')
+
+        has_price = any(bool(x) for x in (frst, last, minp, maxp, tradavg))
+        has_trade_volume = bool(ntlfinvol or rglrtxsqty)
+        if not (has_price or has_trade_volume):
+            continue
+        if (not has_price) and opn_intrst and not has_trade_volume:
+            continue
+
+        abertura = to_decimal(frst)
+        fechamento = to_decimal(last)
+        precomin = to_decimal(minp)
+        precomax = to_decimal(maxp)
+        volume = to_decimal(ntlfinvol or rglrtxsqty)
+
+        cotacoes.append({
+            "Ativo": ativo,
+            "DataPregao": to_date(dt),
+            "Abertura": abertura,
+            "Fechamento": fechamento,
+            "PrecoMin": precomin,
+            "PrecoMax": precomax,
+            "Volume": volume
+        })
+
+    logging.info(f'📈 {len(cotacoes)} ativos únicos extraídos')
+    return cotacoes
 
 def salvar_no_banco(cotacoes):
     """

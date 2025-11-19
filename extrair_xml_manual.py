@@ -50,43 +50,35 @@ def processar_xml_chunk(xml_bytes):
         pricrpts = tree.xpath('//*[local-name()="PricRpt"]')
         print(f"📋 Encontrados {len(pricrpts)} registros PricRpt")
         
-        ativos_principais = ['ITUB4', 'PETR4', 'VALE3', 'BBDC4', 'ABEV3', 'MGLU3', 'WEGE3', 'JBSS3']
         cotacoes_encontradas = []
-        
-        print(f"\n🔍 Buscando ativos: {', '.join(ativos_principais)}")
+        print(f"\n🔍 Buscando ativos do mercado à vista (TpMerc = 010)")
         print("=" * 80)
-        
-        for i, pricrpt in enumerate(pricrpts[:100]):  # Processar só os primeiros 100
+        for i, pricrpt in enumerate(pricrpts):
             try:
+                # Filtrar apenas TpMerc == '010'
+                tpmerc_elem = pricrpt.xpath('.//*[local-name()="TpMerc"]')
+                if not tpmerc_elem or tpmerc_elem[0].text.strip() != "010":
+                    continue
                 # Extrair símbolo
                 symbol_elem = pricrpt.xpath('.//*[local-name()="FinInstrmId"]/*[local-name()="Othr"]/*[local-name()="Id"]')
                 if not symbol_elem:
                     continue
-                    
                 symbol = symbol_elem[0].text.strip()
-                
-                if symbol not in ativos_principais:
-                    continue
-                
                 # Extrair preços
                 first_price_elem = pricrpt.xpath('.//*[local-name()="FrstPric"]/*[local-name()="Amt"]')
                 last_price_elem = pricrpt.xpath('.//*[local-name()="LastPric"]/*[local-name()="Amt"]')
-                
                 # Extrair volume
                 ttl_vol_elem = pricrpt.xpath('.//*[local-name()="TtlVol"]')
-                
                 if first_price_elem and last_price_elem and ttl_vol_elem:
                     first_price = float(first_price_elem[0].text)
                     last_price = float(last_price_elem[0].text)
                     volume = int(float(ttl_vol_elem[0].text))
-                    
                     cotacao = {
                         'symbol': symbol,
                         'first_price': first_price,
                         'last_price': last_price,
                         'volume': volume
                     }
-                    
                     cotacoes_encontradas.append(cotacao)
                     print(f"✅ {symbol}: Abertura=R${first_price:.2f} | Fechamento=R${last_price:.2f} | Volume={volume:,}")
                     
