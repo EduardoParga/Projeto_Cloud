@@ -33,15 +33,6 @@
                                 <option value="">Carregando ativos...</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Período:</label>
-                            <select id="periodSelect" class="form-select">
-                                <option value="7">7 dias</option>
-                                <option value="15">15 dias</option>
-                                <option value="30" selected>30 dias</option>
-                                <option value="60">60 dias</option>
-                            </select>
-                        </div>
                         <button id="consultarBtn" class="btn btn-primary w-100">
                             <span id="btnText">🔎 Consultar</span>
                             <span id="btnLoading" class="d-none">
@@ -87,14 +78,14 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped" id="cotacoesTable">
-                                <thead>
+                                <thead class="table-dark">
                                     <tr>
-                                        <th>Data</th>
-                                        <th>Abertura</th>
-                                        <th>Fechamento</th>
-                                        <th>Mínimo</th>
-                                        <th>Máximo</th>
-                                        <th>Volume</th>
+                                        <th>📅 Data</th>
+                                        <th>🟢 Abertura</th>
+                                        <th>🔴 Mínimo</th>
+                                        <th>🔵 Máximo</th>
+                                        <th>🟡 Fechamento</th>
+                                        <th>📊 Volume</th>
                                     </tr>
                                 </thead>
                                 <tbody id="cotacoesTableBody">
@@ -112,6 +103,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

@@ -2,114 +2,192 @@ import azure.functions as func
 import logging
 import zipfile
 import io
+import xml.etree.ElementTree as ET
 import pymssql
-import os
-from datetime import datetime
+from datetime import datetime, timedelta
+from azure.storage.blob import BlobServiceClient
 
 def main(myblob: func.InputStream) -> None:
-    logging.info(f"🔄 Processando blob: {myblob.name} ({myblob.length} bytes)")
-
+    """
+    🎯 BLOB TRIGGER - ESPECIFICAÇÃO DO PROFESSOR
+    
+    Executa AUTOMATICAMENTE quando arquivo é enviado pelo TIME TRIGGER
+    Processa arquivo ZIP/XML da B3 e carrega no Azure SQL Database
+    """
+    logging.info(f'🎯 BLOB TRIGGER ATIVADO!')
+    logging.info(f'📁 Arquivo: {myblob.name}')
+    logging.info(f'📏 Tamanho: {myblob.length} bytes')
+    
     try:
+        # Só processar arquivos B3
+        if not ('SPRE' in myblob.name or 'B3_DIARIO' in myblob.name):
+            logging.info(f'⏭️ Arquivo ignorado: {myblob.name} (não é arquivo B3)')
+            return
+            
+        logging.info('🔄 BLOB TRIGGER - Processando arquivo B3...')
+        
         # Ler conteúdo do blob
         blob_content = myblob.read()
         
         # Processar ZIP
         with zipfile.ZipFile(io.BytesIO(blob_content), 'r') as zip_file:
-            for file_name in zip_file.namelist():
-                if file_name.upper().startswith('COTACAO') and file_name.endswith('.txt'):
-                    logging.info(f"📄 Processando arquivo: {file_name}")
+            xml_files = [f for f in zip_file.namelist() if f.endswith('.xml')]
+            
+            if not xml_files:
+                logging.warning('⚠️ Nenhum arquivo XML encontrado no ZIP')
+                return
+                
+            xml_file = xml_files[0]
+            logging.info(f'📄 Processando XML: {xml_file}')
+            
+            # Extrair e processar XML
+            with zip_file.open(xml_file) as xml_content:
+                tree = ET.parse(xml_content)
+                root = tree.getroot()
+                
+                # Extrair dados de cotações
+                cotacoes = extrair_cotacoes_b3(root, xml_file)
+                
+                if cotacoes:
+                    # Salvar no Azure SQL Database
+                    salvar_no_banco(cotacoes)
                     
-                    with zip_file.open(file_name) as txt_file:
-                        conteudo = txt_file.read().decode('latin-1')
-                        cotacoes = processar_arquivo_b3(conteudo)
-                        
-                        if cotacoes:
-                            inserir_cotacoes_bd(cotacoes)
-                            logging.info(f"✅ {len(cotacoes)} registros inseridos")
-                        else:
-                            logging.warning("⚠️ Nenhuma cotação encontrada")
-                        
-                        return f"Processado: {len(cotacoes)} registros"
-                        
+                    logging.info(f'✅ BLOB TRIGGER CONCLUÍDO!')
+                    logging.info(f'📊 {len(cotacoes)} cotações processadas')
+                    logging.info(f'💾 Dados salvos no Azure SQL Database')
+                else:
+                    logging.warning('⚠️ Nenhuma cotação extraída do XML')
+        
     except Exception as e:
-        logging.error(f"💥 Erro: {str(e)}")
-        raise
+        logging.error(f'❌ ERRO BLOB TRIGGER: {str(e)}')
+        raise e
 
-def processar_arquivo_b3(conteudo_txt):
-    """Processa arquivo TXT da B3"""
-    linhas = conteudo_txt.strip().split('\n')
+def extrair_cotacoes_b3(root, nome_arquivo):
+    """
+    Extrai cotações do XML da B3
+    """
+    logging.info('📊 Extraindo cotações do XML...')
+    
     cotacoes = []
     
-    for linha in linhas:
-        if linha.startswith('01') and len(linha) >= 245:  # Registro de cotação
-            try:
-                ativo = linha[12:24].strip()
-                if not ativo:
+    # Extrair data do arquivo
+    data_str = None
+    if 'SPRE' in nome_arquivo:
+        # Formato: SPRE251118
+        data_part = nome_arquivo.split('SPRE')[1][:6]  # 251118
+        data_str = f'20{data_part}'  # 20251118
+    
+    if data_str:
+        try:
+            data_pregao = datetime.strptime(data_str, '%Y%m%d').date()
+        except:
+            data_pregao = datetime.now().date()
+    else:
+        data_pregao = datetime.now().date()
+    
+    logging.info(f'📅 Data do pregão: {data_pregao}')
+    
+    # Processar namespace do XML B3
+    namespace = {'ns': 'urn:bvmf.052.01.xsd'}
+    
+    # Buscar transações no XML
+    for finInstrm in root.findall('.//ns:FinInstrm', namespace):
+        try:
+            # Extrair símbolo do ativo
+            ativo_elem = finInstrm.find('.//ns:TckrSymb', namespace)
+            if ativo_elem is None:
+                continue
+                
+            ativo = ativo_elem.text.strip()
+            
+            # Filtrar apenas ações (termina com 3, 4, 11, etc.)
+            if not any(ativo.endswith(x) for x in ['3', '4', '11']):
+                continue
+            
+            # Buscar dados de preço
+            preco_elems = finInstrm.findall('.//ns:TradDt', namespace)
+            
+            for trade_elem in preco_elems:
+                try:
+                    # Preços
+                    abertura_elem = trade_elem.find('.//ns:FrstPric', namespace)
+                    fechamento_elem = trade_elem.find('.//ns:LastPric', namespace)
+                    volume_elem = trade_elem.find('.//ns:TtlVol', namespace)
+                    
+                    if abertura_elem is not None and fechamento_elem is not None:
+                        abertura = float(abertura_elem.text)
+                        fechamento = float(fechamento_elem.text)
+                        volume = float(volume_elem.text) if volume_elem is not None else 0
+                        
+                        cotacao = {
+                            'Ativo': ativo,
+                            'DataPregao': data_pregao,
+                            'Abertura': abertura,
+                            'Fechamento': fechamento,
+                            'Volume': int(volume)
+                        }
+                        
+                        cotacoes.append(cotacao)
+                        
+                except Exception as e:
                     continue
                     
-                data_str = linha[2:10]
-                data_pregao = datetime.strptime(data_str, '%Y%m%d').date()
-                
-                # Preços (centavos para reais)
-                abertura = safe_int(linha[56:69]) / 100.0
-                fechamento = safe_int(linha[108:121]) / 100.0
-                preco_min = safe_int(linha[82:95]) / 100.0
-                preco_max = safe_int(linha[69:82]) / 100.0
-                volume = safe_int(linha[170:188])
-                
-                cotacoes.append({
-                    'Ativo': ativo,
-                    'DataPregao': data_pregao,
-                    'Abertura': abertura if abertura > 0 else None,
-                    'Fechamento': fechamento if fechamento > 0 else None,
-                    'PrecoMin': preco_min if preco_min > 0 else None,
-                    'PrecoMax': preco_max if preco_max > 0 else None,
-                    'Volume': volume if volume > 0 else None
-                })
-                
-            except Exception as e:
-                logging.warning(f"⚠️ Erro linha: {e}")
-                continue
+        except Exception as e:
+            continue
     
-    return cotacoes
+    # Agrupar por ativo (pegar apenas um registro por ativo)
+    cotacoes_finais = {}
+    for cot in cotacoes:
+        ativo = cot['Ativo']
+        if ativo not in cotacoes_finais:
+            cotacoes_finais[ativo] = cot
+            
+    resultado = list(cotacoes_finais.values())
+    logging.info(f'📈 {len(resultado)} ativos únicos extraídos')
+    
+    return resultado
 
-def safe_int(value_str):
-    """Converte string para int, retorna 0 se inválido"""
+def salvar_no_banco(cotacoes):
+    """
+    Salva cotações no Azure SQL Database
+    """
+    logging.info('💾 Salvando no Azure SQL Database...')
+    
     try:
-        return int(value_str.strip()) if value_str.strip() else 0
-    except ValueError:
-        return 0
-
-def inserir_cotacoes_bd(cotacoes):
-    """Insere no Azure SQL Database"""
-    try:
+        # Conectar ao banco
         conn = pymssql.connect(
             server='sqlb3server123.database.windows.net',
             user='b3admin',
             password='SenhaSegura123!',
-            database='b3database'
+            database='b3database',
+            timeout=30
         )
         
-        with conn.cursor() as cur:
-            # SQL Server syntax
-            for cotacao in cotacoes:
-                cur.execute('''
-                    MERGE Cotacoes AS target
-                    USING (SELECT %s as Ativo, %s as DataPregao, %s as Abertura, %s as Fechamento, %s as Volume) AS source
-                    ON target.Ativo = source.Ativo AND target.DataPregao = source.DataPregao
-                    WHEN MATCHED THEN
-                        UPDATE SET Abertura = source.Abertura, Fechamento = source.Fechamento, Volume = source.Volume
-                    WHEN NOT MATCHED THEN
-                        INSERT (Ativo, DataPregao, Abertura, Fechamento, Volume)
-                        VALUES (source.Ativo, source.DataPregao, source.Abertura, source.Fechamento, source.Volume);
-                ''', (cotacao['Ativo'], cotacao['DataPregao'], cotacao['Abertura'], cotacao['Fechamento'], cotacao['Volume']))
-            
-            conn.commit()
-            logging.info(f"💾 {len(cotacoes)} registros salvos no Azure SQL")
-            
+        cursor = conn.cursor()
+        
+        # Limpar dados antigos
+        cursor.execute("DELETE FROM Cotacoes")
+        logging.info('🗑️ Dados antigos removidos')
+        
+        # Inserir novos dados
+        for cotacao in cotacoes:
+            cursor.execute("""
+                INSERT INTO Cotacoes (Ativo, DataPregao, Abertura, Fechamento, Volume)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (
+                cotacao['Ativo'],
+                cotacao['DataPregao'],
+                cotacao['Abertura'],
+                cotacao['Fechamento'],
+                cotacao['Volume']
+            ))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        logging.info(f'✅ {len(cotacoes)} cotações inseridas no banco!')
+        
     except Exception as e:
-        logging.error(f"💥 Erro BD: {str(e)}")
-        raise
-    finally:
-        if 'conn' in locals():
-            conn.close()
+        logging.error(f'❌ Erro ao salvar no banco: {e}')
+        raise e

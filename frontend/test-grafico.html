@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Gráfico B3</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Teste de Gráfico B3</h1>
+    <div style="width: 600px; height: 400px;">
+        <canvas id="testChart"></canvas>
+    </div>
+    <div id="info"></div>
+    
+    <script>
+        const API_BASE_URL = 'https://func-b3-test.azurewebsites.net/api';
+        
+        async function testarGrafico() {
+            try {
+                console.log('Buscando dados para ITUB4...');
+                const response = await fetch(`${API_BASE_URL}/dados`);
+                const data = await response.json();
+                
+                const itub4Data = data.dados.filter(d => d.simbolo === 'ITUB4');
+                console.log('Dados ITUB4:', itub4Data);
+                
+                const ctx = document.getElementById('testChart').getContext('2d');
+                
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['07/10/2025'],
+                        datasets: [{
+                            label: 'ITUB4 - Fechamento',
+                            data: [itub4Data[0].fechamento],
+                            borderColor: '#007bff',
+                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                            borderWidth: 2,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Teste Gráfico ITUB4'
+                            }
+                        }
+                    }
+                });
+                
+                document.getElementById('info').innerHTML = `
+                    <h3>✅ Gráfico Criado!</h3>
+                    <p>Ativo: ${itub4Data[0].simbolo}</p>
+                    <p>Data: ${itub4Data[0].data}</p>
+                    <p>Fechamento: R$ ${itub4Data[0].fechamento}</p>
+                    <p>Volume: ${itub4Data[0].volume.toLocaleString('pt-BR')}</p>
+                `;
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('info').innerHTML = `<h3>❌ Erro: ${error.message}</h3>`;
+            }
+        }
+        
+        testarGrafico();
+    </script>
+</body>
+</html>
