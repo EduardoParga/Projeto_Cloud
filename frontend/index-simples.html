@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B3 - Consulta REAL</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">📈 B3 - Dados REAIS</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5>🔍 Consultar Ativo</h5>
+                    </div>
+                    <div class="card-body">
+                        <select id="ativoSelect" class="form-select mb-3">
+                            <option value="">Carregando...</option>
+                        </select>
+                        <button id="consultarBtn" class="btn btn-primary w-100" onclick="consultarAtivo()">
+                            Consultar Dados REAIS
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h6>📊 Resumo</h6>
+                    </div>
+                    <div class="card-body" id="resumoCard">
+                        Selecione um ativo...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h6>📈 Gráfico</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="grafico" width="400" height="200"></canvas>
+                        <div id="noData" style="display:none" class="text-center text-muted">
+                            Nenhum dado para exibir
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://func-b3-test.azurewebsites.net/api';
+        let chart = null;
+        let dadosCache = null;
+
+        // Carregar ativos ao iniciar
+        document.addEventListener('DOMContentLoaded', carregarAtivos);
+
+        async function carregarAtivos() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/ativos`);
+                const data = await response.json();
+                
+                const select = document.getElementById('ativoSelect');
+                select.innerHTML = '<option value="">Selecione um ativo...</option>';
+                
+                data.ativos.forEach(ativo => {
+                    select.innerHTML += `<option value="${ativo}">${ativo}</option>`;
+                });
+                
+                console.log(`${data.ativos.length} ativos carregados da fonte: ${data.fonte}`);
+            } catch (error) {
+                console.error('Erro ao carregar ativos:', error);
+            }
+        }
+
+        async function consultarAtivo() {
+            const ativo = document.getElementById('ativoSelect').value;
+            if (!ativo) {
+                alert('Selecione um ativo!');
+                return;
+            }
+
+            try {
+                // Buscar dados apenas uma vez se não estiver em cache
+                if (!dadosCache) {
+                    console.log('Buscando dados da API...');
+                    const response = await fetch(`${API_BASE_URL}/dados`);
+                    dadosCache = await response.json();
+                }
+
+                // Filtrar apenas dados do ativo selecionado
+                const dadosAtivo = dadosCache.dados.filter(d => d.simbolo === ativo);
+                
+                console.log(`Dados encontrados para ${ativo}:`, dadosAtivo);
+
+                if (dadosAtivo.length === 0) {
+                    document.getElementById('resumoCard').innerHTML = `<p class="text-danger">❌ Nenhum dado encontrado para ${ativo}</p>`;
+                    return;
+                }
+
+                // Calcular volume APENAS do ativo selecionado
+                const volumeAtivo = dadosAtivo.reduce((acc, d) => acc + d.volume, 0);
+
+                // Atualizar resumo
+                document.getElementById('resumoCard').innerHTML = `
+                    <h6 class="text-primary">${ativo} - Dados REAIS</h6>
+                    <small class="text-success">✅ ${dadosCache.fonte}</small>
+                    <hr>
+                    <p><strong>Registros:</strong> ${dadosAtivo.length}</p>
+                    <p><strong>Volume ${ativo}:</strong> ${volumeAtivo.toLocaleString('pt-BR')}</p>
+                    <p><strong>Último Preço:</strong> R$ ${dadosAtivo[0].fechamento}</p>
+                    <p><strong>Data:</strong> ${dadosAtivo[0].data}</p>
+                `;
+
+                // Criar gráfico
+                criarGrafico(ativo, dadosAtivo);
+
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('resumoCard').innerHTML = `<p class="text-danger">❌ Erro: ${error.message}</p>`;
+            }
+        }
+
+        function criarGrafico(ativo, dados) {
+            const ctx = document.getElementById('grafico').getContext('2d');
+            const noDataDiv = document.getElementById('noData');
+
+            // Destruir gráfico anterior
+            if (chart) {
+                chart.destroy();
+            }
+
+            if (dados.length === 0) {
+                noDataDiv.style.display = 'block';
+                return;
+            }
+
+            noDataDiv.style.display = 'none';
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [ativo],
+                    datasets: [{
+                        label: 'Preço de Fechamento (R$)',
+                        data: [dados[0].fechamento],
+                        backgroundColor: '#007bff',
+                        borderColor: '#0056b3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${ativo} - Preço REAL B3`
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Preço (R$)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            console.log(`Gráfico criado para ${ativo} com preço R$ ${dados[0].fechamento}`);
+        }
+    </script>
+</body>
+</html>

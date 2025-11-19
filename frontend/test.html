@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste API B3</title>
+</head>
+<body>
+    <h1>Teste de Conexão com APIs B3</h1>
+    <div id="resultado"></div>
+    
+    <script>
+        const API_BASE_URL = 'https://func-b3-test.azurewebsites.net/api';
+        
+        async function testarAPIs() {
+            try {
+                console.log('Testando API de ativos...');
+                const ativosResponse = await fetch(`${API_BASE_URL}/ativos`);
+                const ativosData = await ativosResponse.json();
+                console.log('Ativos:', ativosData);
+                
+                console.log('Testando API de dados...');
+                const dadosResponse = await fetch(`${API_BASE_URL}/dados`);
+                const dadosData = await dadosResponse.json();
+                console.log('Dados:', dadosData);
+                
+                document.getElementById('resultado').innerHTML = `
+                    <h3>✅ APIs FUNCIONANDO!</h3>
+                    <p><strong>Ativos carregados:</strong> ${ativosData.ativos.length}</p>
+                    <p><strong>Lista:</strong> ${ativosData.ativos.join(', ')}</p>
+                    <p><strong>Fonte:</strong> ${ativosData.fonte}</p>
+                    <p><strong>Total registros:</strong> ${dadosData.dados.length}</p>
+                `;
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('resultado').innerHTML = `
+                    <h3>❌ ERRO!</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+        
+        testarAPIs();
+    </script>
+</body>
+</html>
