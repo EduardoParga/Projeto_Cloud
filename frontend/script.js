@@ -1,6 +1,5 @@
-// MUDE AQUI PARA A URL DO SEU BACKEND NO AZURE
-const API_BASE_URL = 'http://localhost:8000/api'; // LOCAL
-// const API_BASE_URL = 'https://sua-app-backend.azurewebsites.net/api'; // AZURE
+const API_BASE_URL = 'https://app-b3-backend123-e2bcc3hrg7c4aggh.westus-01.azurewebsites.net/api'; // AZURE
+
 
 let chart = null;
 
