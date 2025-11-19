@@ -2,7 +2,7 @@ import azure.functions as func
 import logging
 import zipfile
 import io
-import psycopg2
+import pymssql
 import os
 from datetime import datetime
 
@@ -81,28 +81,35 @@ def safe_int(value_str):
         return 0
 
 def inserir_cotacoes_bd(cotacoes):
-    """Insere no PostgreSQL"""
-    connection_string = os.environ['DATABASE_CONNECTION_STRING']
-    
-    with psycopg2.connect(connection_string) as conn:
+    """Insere no Azure SQL Database"""
+    try:
+        conn = pymssql.connect(
+            server='sqlb3server123.database.windows.net',
+            user='b3admin',
+            password='SenhaSegura123!',
+            database='b3database'
+        )
+        
         with conn.cursor() as cur:
-            upsert_sql = """
-            INSERT INTO b3.cotacoes
-            ("Ativo","DataPregao","Abertura","Fechamento","PrecoMin","PrecoMax","Volume")
-            VALUES
-            (%(Ativo)s,%(DataPregao)s,%(Abertura)s,%(Fechamento)s,%(PrecoMin)s,%(PrecoMax)s,%(Volume)s)
-            ON CONFLICT ("Ativo","DataPregao") DO UPDATE SET
-              "Abertura"   = EXCLUDED."Abertura",
-              "Fechamento" = EXCLUDED."Fechamento",
-              "PrecoMin"   = EXCLUDED."PrecoMin",
-              "PrecoMax"   = EXCLUDED."PrecoMax",
-              "Volume"     = EXCLUDED."Volume";
-            """
-            
-            # Inserir em lotes
-            for i in range(0, len(cotacoes), 1000):
-                lote = cotacoes[i:i+1000]
-                cur.executemany(upsert_sql, lote)
+            # SQL Server syntax
+            for cotacao in cotacoes:
+                cur.execute('''
+                    MERGE Cotacoes AS target
+                    USING (SELECT %s as Ativo, %s as DataPregao, %s as Abertura, %s as Fechamento, %s as Volume) AS source
+                    ON target.Ativo = source.Ativo AND target.DataPregao = source.DataPregao
+                    WHEN MATCHED THEN
+                        UPDATE SET Abertura = source.Abertura, Fechamento = source.Fechamento, Volume = source.Volume
+                    WHEN NOT MATCHED THEN
+                        INSERT (Ativo, DataPregao, Abertura, Fechamento, Volume)
+                        VALUES (source.Ativo, source.DataPregao, source.Abertura, source.Fechamento, source.Volume);
+                ''', (cotacao['Ativo'], cotacao['DataPregao'], cotacao['Abertura'], cotacao['Fechamento'], cotacao['Volume']))
             
             conn.commit()
-            logging.info(f"💾 {len(cotacoes)} registros salvos no BD")
+            logging.info(f"💾 {len(cotacoes)} registros salvos no Azure SQL")
+            
+    except Exception as e:
+        logging.error(f"💥 Erro BD: {str(e)}")
+        raise
+    finally:
+        if 'conn' in locals():
+            conn.close()
