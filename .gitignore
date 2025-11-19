@@ -4,3 +4,5 @@ __pycache__/
 test.py
 .docker/postgres/data/**
 azurite/
+local.settings.json
+*.zip
